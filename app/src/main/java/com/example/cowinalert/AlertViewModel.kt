@@ -3,7 +3,6 @@ package com.example.cowinalert
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 
@@ -21,6 +20,9 @@ class AlertViewModel(
         initialize()
     }
 
+    var selectedAlerts by mutableStateOf(mutableListOf<Long>())
+        private set
+
     private fun initialize() {
         uiscope.launch {
             initializeAlerts()
@@ -30,6 +32,22 @@ class AlertViewModel(
     private suspend fun initializeAlerts(){
         withContext(Dispatchers.IO){
             alerts = database.getAllAlerts()
+        }
+    }
+
+    fun deleteAlerts(){
+        println("deleting alerts $selectedAlerts")
+        uiscope.launch{
+            delete()
+        }
+    }
+
+    private suspend fun delete(){
+        withContext(Dispatchers.IO){
+            for(alertID in selectedAlerts){
+                database.delete(alertID)
+            }
+            selectedAlerts.clear()
         }
     }
 }

@@ -3,14 +3,10 @@ package com.example.cowinalert
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.cowinalert.ui.theme.CowinAlertTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,14 +32,6 @@ class MainActivity : ComponentActivity() {
                     CreateAlertScreen(viewModel = createAlertViewModel, navController = navController)
                 }
             }
-//            CowinAlertTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(color = MaterialTheme.colors.background) {
-//
-//
-//                    AlertScreen(viewModel = alertViewModel)
-//                }
-//            }
         }
     }
 }
