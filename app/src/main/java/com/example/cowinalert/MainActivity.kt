@@ -3,6 +3,7 @@ package com.example.cowinalert
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,7 +27,14 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home"){
                 composable("home"){
-                    AlertScreen(viewModel = alertViewModel, navController = navController)
+                    val alerts = alertViewModel.alerts.observeAsState(listOf()).value
+                    println(alertViewModel.selectedAlerts)
+                    AlertScreen(
+                        alerts = alerts,
+                        selectedAlerts = alertViewModel.selectedAlerts,
+                        onAlertSelect = alertViewModel::updateSelectedAlerts,
+                        onDeleteAlerts = alertViewModel::deleteAlerts,
+                        navController = navController)
                 }
                 composable("createAlert"){
                     CreateAlertScreen(viewModel = createAlertViewModel, navController = navController)
