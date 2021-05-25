@@ -18,11 +18,15 @@ import com.example.cowinalert.ui.theme.CowinAlertTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
 fun AlertScreen(
-    viewModel: AlertViewModel,
+    alerts: List<Alert>,
+    selectedAlerts: List<Long>,
+    onAlertSelect: (Long) -> Unit,
+    onDeleteAlerts: () -> Unit,
     navController: NavController
 ) {
     CowinAlertTheme() {
@@ -39,9 +43,9 @@ fun AlertScreen(
                     )
                 },
                 bottomBar = {
-                    if (viewModel.selectedAlerts.isNotEmpty()) {
+                    if (selectedAlerts.isNotEmpty()) {
                         Button(
-                            onClick = { viewModel.deleteAlerts() },
+                            onClick = onDeleteAlerts,
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
@@ -64,18 +68,23 @@ fun AlertScreen(
                 }
 
             ) {
-                AlertList(viewModel.alerts, viewModel.selectedAlerts)
+                AlertList(
+                    alerts,
+                    selectedAlerts,
+                    onAlertSelect,
+                )
             }
-
         }
-
     }
-
 }
 
 
 @Composable
-fun AlertList(alerts: List<Alert>, selectedAlerts: MutableList<Long>) {
+fun AlertList(
+    alerts: List<Alert>,
+    selectedAlerts: List<Long>,
+    onAlertSelect: (Long) -> Unit
+) {
     LazyColumn(
         //contentPadding = PaddingValues(top = 10.dp)
     ) {
@@ -92,12 +101,8 @@ fun AlertList(alerts: List<Alert>, selectedAlerts: MutableList<Long>) {
                 .selectable(
                     selected = selectedAlerts.contains(alert.alertID),
                     onClick = {
-                        if (selectedAlerts.contains(alert.alertID)) {
-                            selectedAlerts.remove(alert.alertID)
-                        } else {
-                            selectedAlerts.add(alert.alertID)
-                        }
-                        println("hello $selectedAlerts")
+                        onAlertSelect(alert.alertID)
+                        println("Hello $selectedAlerts")
                     }
                 )
                 .background(selectedAlertBackground)) {
@@ -167,10 +172,10 @@ fun getAgeGroups(alert: Alert): String {
 @Composable
 fun PreviewHomeScreen() {
     val alerts = listOf(
-        Alert(alertID = 1, name = "alert1", pinCode = "123"),
-        Alert(alertID = 2, name = "alert2", pinCode = "123"),
-        Alert(alertID = 3, name = "alert3", pinCode = "123"),
+        Alert(alertID = 1, name = "alert1", pinCode = 123),
+        Alert(alertID = 2, name = "alert2", pinCode = 123),
+        Alert(alertID = 3, name = "alert3", pinCode = 123),
     )
     val selectedItems: MutableList<Long> = mutableListOf(1, 2)
-    AlertList(alerts, selectedItems)
+    // AlertList(alerts, selectedItems)
 }

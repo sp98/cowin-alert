@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class CreateAlertViewModel(
-    val database: AlertDatabaseDao
+    private val database: AlertDatabaseDao
 ) : ViewModel() {
 
     // ViewModel Job for coroutines
@@ -61,11 +61,20 @@ class CreateAlertViewModel(
         isBelow45 = below45
     }
 
+    private fun reset(){
+        name = ""
+        pin = ""
+        isCovishield = false
+        isCovaxin = false
+        isAbove45 = false
+        isBelow45 = false
+    }
+
     fun onCreate(navController: NavController){
         // create instance of alert data class
-        val alert: Alert = Alert(
+        val alert = Alert(
             name = name,
-            pinCode = pin,
+            pinCode = pin.toLong(),
             isCovishield = isCovishield,
             isCovaxin = isCovaxin,
             above45 = isAbove45,
@@ -74,6 +83,10 @@ class CreateAlertViewModel(
 
         // save alert to database
         onInsert(alert)
+
+        // reset
+        reset()
+
         navController.navigate("Home")
     }
 
@@ -86,7 +99,6 @@ class CreateAlertViewModel(
     private suspend fun insert(alert: Alert){
         withContext(Dispatchers.IO){
             database.insert(alert)
-            println("inserted")
         }
     }
 
