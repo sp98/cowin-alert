@@ -172,9 +172,9 @@ fun getAgeGroups(alert: Alert): String {
 @Composable
 fun PreviewHomeScreen() {
     val alerts = listOf(
-        Alert(alertID = 1, name = "alert1", pinCode = "123"),
-        Alert(alertID = 2, name = "alert2", pinCode = "123"),
-        Alert(alertID = 3, name = "alert3", pinCode = "123"),
+        Alert(alertID = 1, name = "alert1", pinCode = 123),
+        Alert(alertID = 2, name = "alert2", pinCode = 123),
+        Alert(alertID = 3, name = "alert3", pinCode = 123),
     )
     val selectedItems: MutableList<Long> = mutableListOf(1, 2)
     // AlertList(alerts, selectedItems)

@@ -4,9 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.lang.Exception
 
 class AlertViewModel(
     val database: AlertDatabaseDao
@@ -20,9 +25,14 @@ class AlertViewModel(
     var selectedAlerts: List<Long> by mutableStateOf(listOf())
         private set
 
+    private val _result = MutableLiveData<Centers>()
+    val result: LiveData<Centers>
+        get() = _result
+
     init {
         initialize()
     }
+
 
     private fun initialize() {
         uiscope.launch {

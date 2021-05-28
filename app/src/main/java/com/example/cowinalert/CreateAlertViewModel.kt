@@ -74,7 +74,7 @@ class CreateAlertViewModel(
         // create instance of alert data class
         val alert = Alert(
             name = name,
-            pinCode = pin,
+            pinCode = pin.toLong(),
             isCovishield = isCovishield,
             isCovaxin = isCovaxin,
             above45 = isAbove45,
