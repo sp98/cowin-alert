@@ -22,6 +22,9 @@ class AlertViewModel(
     var selectedAlerts: List<Long> by mutableStateOf(listOf())
         private set
 
+    var expandedAlert:Long by mutableStateOf(-1)
+        private set
+
     init {
         initialize()
     }
@@ -31,6 +34,10 @@ class AlertViewModel(
         uiscope.launch {
             initializeAlerts()
         }
+    }
+
+    fun updateExpandedAlert(id: Long){
+        expandedAlert = if (expandedAlert == id) -1 else id
     }
 
     fun updateSelectedAlerts(id: Long) {

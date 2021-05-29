@@ -1,5 +1,7 @@
 package com.example.cowinalert
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -14,8 +16,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +29,7 @@ import androidx.navigation.compose.navigate
 import com.example.cowinalert.ui.theme.CowinAlertTheme
 
 
+@ExperimentalAnimationApi
 @Composable
 fun AlertScreen(
     alerts: List<Alert>,
@@ -32,6 +37,8 @@ fun AlertScreen(
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
+    expandedAlertID: Long,
+    onExpandAlertStateChange: (Long) -> Unit,
     navController: NavController
 ) {
     CowinAlertTheme() {
@@ -77,6 +84,8 @@ fun AlertScreen(
                     alerts,
                     results,
                     selectedAlerts,
+                    expandedAlertID,
+                    onExpandAlertStateChange,
                     onAlertSelect,
                 )
             }
@@ -85,11 +94,14 @@ fun AlertScreen(
 }
 
 
+@ExperimentalAnimationApi
 @Composable
 fun AlertList(
     alerts: List<Alert>,
     resultMap: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
+    expandedAlertID: Long,
+    onExpandAlertStateChange: (Long) -> Unit,
     onAlertSelect: (Long) -> Unit
 ) {
     LazyColumn(
@@ -97,6 +109,7 @@ fun AlertList(
     ) {
         items(items = alerts) { alert ->
             val results = resultMap[alert.alertID]
+            val expand = expandedAlertID == alert.alertID
             val totalResults = results?.let { results.size } ?: 0
             val vaccines: String = getVaccines(alert)
             val ageGroup: String = getAgeGroups(alert)
@@ -105,75 +118,130 @@ fun AlertList(
             } else {
                 MaterialTheme.colors.background
             }
+            val expandArrowRotation = if (expand) 90f else 0f
+            val cardElevation = if (expand) 15.dp else 3.dp
 
             Card(
                 modifier = Modifier
                     .padding(10.dp),
                 shape = RoundedCornerShape(12.dp),
                 border = BorderStroke(1.dp, Color.LightGray),
-                elevation = 8.dp
+                elevation = cardElevation
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(selectedAlertBackground)
-                        .pointerInput(selectedAlerts) {
-                            detectTapGestures(
-                                onLongPress = {
-                                    onAlertSelect(alert.alertID)
-                                },
-                                onTap = {
-                                    if(selectedAlerts.isNotEmpty()) {
-                                        onAlertSelect(alert.alertID)
-                                    } else {
-                                        // expand the card to show results
-                                    }
-                                }
-                            )
-                        },
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = "$totalResults",
-                            modifier = Modifier.padding(20.dp),
-                            fontSize = 50.sp
-                        )
-                    }
-
-                    Column(
+                Column() {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .weight(2f)
+                            .background(selectedAlertBackground)
+                            .pointerInput(selectedAlerts) {
+                                detectTapGestures(
+                                    onLongPress = {
+                                        onAlertSelect(alert.alertID)
+                                    },
+                                    onTap = {
+                                        if (selectedAlerts.isNotEmpty()) {
+                                            onAlertSelect(alert.alertID)
+                                        } else {
+                                            onExpandAlertStateChange(alert.alertID)
+                                        }
+                                    }
+                                )
+                            },
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        Column(
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = alert.name)
-                            Text(text = "${alert.pinCode}")
+                            Row(
+                                modifier = Modifier.padding(20.dp),
+                            ) {
+                                Text(
+                                    text = "$totalResults",
+                                    fontSize = 50.sp
+                                )
+                                CardArrow(expandArrowRotation)
+                            }
+
                         }
 
-                        if (vaccines != "" || ageGroup != "") {
+                        Column(
+                            modifier = Modifier
+                                .weight(2f)
+                        ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = vaccines)
-                                Text(text = ageGroup)
+                                Text(text = alert.name)
+                                Text(text = "${alert.pinCode}")
+                            }
+
+                            if (vaccines != "" || ageGroup != "") {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = vaccines)
+                                    Text(text = ageGroup)
+                                }
+                            }
+                        }
+                    }
+
+                    Row() {
+                        AnimatedVisibility(
+                            visible = alert.alertID == expandedAlertID,
+                        ) {
+                            Divider()
+                            if (totalResults > 0) {
+                                ResultList(results!!)
+                            } else {
+                                Text(
+                                    "No alerts triggered",
+                                    modifier = Modifier.padding(10.dp)
+                                )
                             }
                         }
                     }
                 }
+
+
             }
+
         }
 
     }
 }
 
+
+@Composable
+fun ResultList(
+    results: List<Result>
+) {
+    LazyColumn() {
+        items(items = results) { result ->
+            Column() {
+                Text(text = "${result.hospitalName}")
+            }
+            Divider()
+        }
+    }
+
+}
+
+@Composable
+fun CardArrow(
+    degree: Float,
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_expand),
+        contentDescription = "arrow",
+        modifier = Modifier.rotate(degree)
+    )
+}
 
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
@@ -207,6 +275,7 @@ fun getAgeGroups(alert: Alert): String {
 }
 
 
+@ExperimentalAnimationApi
 @Preview(name = "Alert List")
 @Composable
 fun PreviewHomeScreen() {
@@ -215,6 +284,24 @@ fun PreviewHomeScreen() {
         Alert(alertID = 2, name = "alert2", pinCode = 123),
         Alert(alertID = 3, name = "alert3", pinCode = 123),
     )
-    val selectedItems: MutableList<Long> = mutableListOf(1, 2)
-    // AlertList(alerts, selectedItems)
+
+    val selectedAlerts = listOf<Long>()
+    val resultMap = mapOf(
+        alerts[0].alertID to listOf<Result>(
+            Result(
+                alertID = alerts[0].alertID,
+                resultID = 1,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                dose1Capacity = 10,
+                dose2Capacity = 20,
+            ),
+        )
+    )
+
+    AlertList(alerts, resultMap, selectedAlerts, alerts[2].alertID, {}, {})
 }
