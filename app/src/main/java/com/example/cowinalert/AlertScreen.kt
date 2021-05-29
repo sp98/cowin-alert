@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -86,7 +87,7 @@ fun AlertScreen(
                     selectedAlerts,
                     expandedAlertID,
                     onExpandAlertStateChange,
-                    onAlertSelect,
+                    onAlertSelect
                 )
             }
         }
@@ -102,10 +103,10 @@ fun AlertList(
     selectedAlerts: List<Long>,
     expandedAlertID: Long,
     onExpandAlertStateChange: (Long) -> Unit,
-    onAlertSelect: (Long) -> Unit
+    onAlertSelect: (Long) -> Unit,
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(top = 10.dp)
+        //contentPadding = PaddingValues(top = 10.dp)
     ) {
         items(items = alerts) { alert ->
             val results = resultMap[alert.alertID]
@@ -123,8 +124,8 @@ fun AlertList(
 
             Card(
                 modifier = Modifier
-                    .padding(10.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .padding(8.dp),
+                shape = RoundedCornerShape(15   .dp),
                 border = BorderStroke(1.dp, Color.LightGray),
                 elevation = cardElevation
             ) {
@@ -152,7 +153,7 @@ fun AlertList(
                             modifier = Modifier.weight(1f)
                         ) {
                             Row(
-                                modifier = Modifier.padding(20.dp),
+                                modifier = Modifier.padding(10.dp),
                             ) {
                                 Text(
                                     text = "$totalResults",
@@ -165,29 +166,14 @@ fun AlertList(
 
                         Column(
                             modifier = Modifier
-                                .weight(2f)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = alert.name)
-                                Text(text = "${alert.pinCode}")
-                            }
+                                .weight(2f),
+                            verticalArrangement = Arrangement.Center,
 
-                            if (vaccines != "" || ageGroup != "") {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(text = vaccines)
-                                    Text(text = ageGroup)
-                                }
-                            }
+                        ) {
+
+                            Text(text = "Name:  ${alert.name}", style = MaterialTheme.typography.body1)
+                            Spacer(Modifier.padding(3.dp))
+                            Text(text = "Pincode:  ${alert.pinCode}", style = MaterialTheme.typography.body1)
                         }
                     }
 
@@ -195,22 +181,37 @@ fun AlertList(
                         AnimatedVisibility(
                             visible = alert.alertID == expandedAlertID,
                         ) {
+
                             Divider()
-                            if (totalResults > 0) {
-                                ResultList(results!!)
-                            } else {
-                                Text(
-                                    "No alerts triggered",
-                                    modifier = Modifier.padding(10.dp)
-                                )
+
+                            Column() {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ){
+                                    if (vaccines != "" || ageGroup != "") {
+                                        Text(text = "vaccines: $vaccines")
+                                        Text(text = "age limit: $ageGroup")
+                                    }
+                                }
+                                if (totalResults > 0) {
+                                    ResultList(results!!)
+                                } else {
+                                    Text(
+                                        "No alerts triggered",
+                                        modifier = Modifier.padding(10.dp)
+                                    )
+                                }
                             }
+
                         }
                     }
+
                 }
-
-
             }
-
         }
 
     }
@@ -290,7 +291,6 @@ fun PreviewHomeScreen() {
         alerts[0].alertID to listOf<Result>(
             Result(
                 alertID = alerts[0].alertID,
-                resultID = 1,
                 hospitalName = "test hospital",
                 address = "2c/46",
                 stateName = "Haryana",
@@ -305,3 +305,4 @@ fun PreviewHomeScreen() {
 
     AlertList(alerts, resultMap, selectedAlerts, alerts[2].alertID, {}, {})
 }
+

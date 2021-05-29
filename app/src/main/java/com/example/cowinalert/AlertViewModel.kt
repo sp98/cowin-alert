@@ -38,6 +38,7 @@ class AlertViewModel(
 
     fun updateExpandedAlert(id: Long){
         expandedAlert = if (expandedAlert == id) -1 else id
+        dummyResults(id)
     }
 
     fun updateSelectedAlerts(id: Long) {
@@ -55,21 +56,20 @@ class AlertViewModel(
         withContext(Dispatchers.IO) {
             alerts = database.getAllAlerts()
             val resultList = database.getAllResults()
-            var op: Map<Long, List<Result>> = mapOf()
-            val resultMap = Transformations.map(resultList) {
-                for (r in it) {
-                    if (op.containsKey(r.alertID)) {
-                        if (op[r.alertID]?.contains(it) != true) {
-                            op[r.alertID]?.toMutableList()?.add(r)
-                        }
-                    } else {
-                        op[r.alertID]?.toMutableList()?.add(r)
-                    }
-                }
-                op
-            }
+            val resultMap = Transformations.map(resultList) { it ->
+//                for (r in it) {
+//                    println("Result - $r")
+//                    if (op.containsKey(r.alertID)) {
+//                        if (op[r.alertID]?.contains(it) != true) {
+//                            op[r.alertID]?.toMutableList()?.add(r)
+//                        }
+//                    } else {
+//                        op[r.alertID]?.toMutableList()?.add(r)
+//                    }
+//
+                it.associateBy( {it.alertID}, { listOf(it) })
 
-            println(" hello -- $resultMap")
+            }
             result = resultMap
 
 
@@ -89,6 +89,35 @@ class AlertViewModel(
                 database.deleteAlert(alertID)
                 updateSelectedAlerts(alertID)
             }
+        }
+    }
+
+    fun dummyResults(id: Long){
+       val r = Result(
+            alertID = id,
+            resultID = 1,
+            hospitalName = "test hospital",
+            address = "2c/46",
+            stateName = "Haryana",
+            districtName = "faridabad",
+            blockName = "NIT-2",
+            feeType = "paid",
+            dose1Capacity = 10,
+            dose2Capacity = 20,
+        )
+
+        insertResult(r)
+    }
+
+    private fun insertResult(r: Result){
+        uiscope.launch {
+            insertResult2(r)
+        }
+    }
+
+    private suspend fun insertResult2(r: Result){
+        withContext(Dispatchers.IO){
+            database.insertResult(r)
         }
     }
 }

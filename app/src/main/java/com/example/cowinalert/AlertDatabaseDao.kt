@@ -3,6 +3,7 @@ package com.example.cowinalert
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
@@ -16,7 +17,7 @@ interface AlertDatabaseDao {
     @Query("DELETE FROM cowin_alert_table WHERE alertID = :key")
     fun deleteAlert(key: Long)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertResult(result: Result)
 
     @Query("SELECT * FROM cowin_result_table")
