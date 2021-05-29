@@ -28,9 +28,10 @@ class MainActivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "home"){
                 composable("home"){
                     val alerts = alertViewModel.alerts.observeAsState(listOf()).value
-                    println(alertViewModel.selectedAlerts)
+                    val results = alertViewModel.result.observeAsState(mapOf()).value
                     AlertScreen(
                         alerts = alerts,
+                        results = results,
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,

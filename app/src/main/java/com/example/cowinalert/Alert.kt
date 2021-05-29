@@ -3,7 +3,6 @@ package com.example.cowinalert
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 
 @Entity(tableName = "cowin_alert_table")
 data class Alert(

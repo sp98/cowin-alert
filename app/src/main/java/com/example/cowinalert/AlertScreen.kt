@@ -1,29 +1,34 @@
 package com.example.cowinalert
 
+import androidx.compose.animation.slideIn
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.cowinalert.ui.theme.CowinAlertTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
 fun AlertScreen(
     alerts: List<Alert>,
+    results: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
@@ -70,6 +75,7 @@ fun AlertScreen(
             ) {
                 AlertList(
                     alerts,
+                    results,
                     selectedAlerts,
                     onAlertSelect,
                 )
@@ -82,13 +88,16 @@ fun AlertScreen(
 @Composable
 fun AlertList(
     alerts: List<Alert>,
+    resultMap: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit
 ) {
     LazyColumn(
-        //contentPadding = PaddingValues(top = 10.dp)
+        contentPadding = PaddingValues(top = 10.dp)
     ) {
         items(items = alerts) { alert ->
+            val results = resultMap[alert.alertID]
+            val totalResults = results?.let { results.size } ?: 0
             val vaccines: String = getVaccines(alert)
             val ageGroup: String = getAgeGroups(alert)
             val selectedAlertBackground = if (selectedAlerts.contains(alert.alertID)) {
@@ -96,40 +105,70 @@ fun AlertList(
             } else {
                 MaterialTheme.colors.background
             }
-            println("Hi $selectedAlertBackground")
-            Column(modifier = Modifier
-                .selectable(
-                    selected = selectedAlerts.contains(alert.alertID),
-                    onClick = {
-                        onAlertSelect(alert.alertID)
-                        println("Hello $selectedAlerts")
-                    }
-                )
-                .background(selectedAlertBackground)) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "name: " + alert.name)
-                    Text(text = "pin: " + alert.pinCode)
-                }
 
-                if (vaccines != "" || ageGroup != "") {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+            Card(
+                modifier = Modifier
+                    .padding(10.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, Color.LightGray),
+                elevation = 8.dp
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .background(selectedAlertBackground)
+                        .pointerInput(selectedAlerts) {
+                            detectTapGestures(
+                                onLongPress = {
+                                    onAlertSelect(alert.alertID)
+                                },
+                                onTap = {
+                                    if(selectedAlerts.isNotEmpty()) {
+                                        onAlertSelect(alert.alertID)
+                                    } else {
+                                        // expand the card to show results
+                                    }
+                                }
+                            )
+                        },
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = "vaccine: $vaccines")
-                        Text(text = "age: $ageGroup")
+                        Text(
+                            text = "$totalResults",
+                            modifier = Modifier.padding(20.dp),
+                            fontSize = 50.sp
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(2f)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = alert.name)
+                            Text(text = "${alert.pinCode}")
+                        }
+
+                        if (vaccines != "" || ageGroup != "") {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = vaccines)
+                                Text(text = ageGroup)
+                            }
+                        }
                     }
                 }
             }
-
-            Divider()
         }
 
     }

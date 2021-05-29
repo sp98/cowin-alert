@@ -8,11 +8,20 @@ import androidx.room.Query
 @Dao
 interface AlertDatabaseDao {
     @Insert
-    fun insert(alert: Alert)
+    fun insertAlert(alert: Alert)
 
     @Query("SELECT * FROM cowin_alert_table ORDER BY  alertID DESC")
     fun getAllAlerts(): LiveData<List<Alert>>
 
     @Query("DELETE FROM cowin_alert_table WHERE alertID = :key")
-    fun delete(key: Long)
+    fun deleteAlert(key: Long)
+
+    @Insert
+    fun insertResult(result: Result)
+
+    @Query("SELECT * FROM cowin_result_table")
+    fun getAllResults(): LiveData<List<Result>>
+
+    @Query("DELETE FROM cowin_result_table WHERE resultID = :key")
+    fun deleteResult(key: Long)
 }

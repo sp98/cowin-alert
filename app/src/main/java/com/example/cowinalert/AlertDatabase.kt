@@ -9,7 +9,6 @@ import androidx.room.RoomDatabase
 abstract class AlertDatabase : RoomDatabase() {
 
     abstract val alertDatabaseDao: AlertDatabaseDao
-    abstract val resultDatabaseDao: ResultDatabaseDao
 
     companion object{
         @Volatile

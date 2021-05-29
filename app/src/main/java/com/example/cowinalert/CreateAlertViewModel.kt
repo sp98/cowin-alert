@@ -98,7 +98,7 @@ class CreateAlertViewModel(
 
     private suspend fun insert(alert: Alert){
         withContext(Dispatchers.IO){
-            database.insert(alert)
+            database.insertAlert(alert)
         }
     }
 
