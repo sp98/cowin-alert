@@ -17,12 +17,12 @@ interface AlertDatabaseDao {
     @Query("DELETE FROM cowin_alert_table WHERE alertID = :key")
     fun deleteAlert(key: Long)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert()
     fun insertResult(result: Result)
 
-    @Query("SELECT * FROM cowin_result_table")
+    @Query("SELECT * FROM cowin_result_table ORDER BY resultID DESC")
     fun getAllResults(): LiveData<List<Result>>
 
-    @Query("DELETE FROM cowin_result_table WHERE resultID = :key")
+    @Query("DELETE FROM cowin_result_table WHERE alertID = :key")
     fun deleteResult(key: Long)
 }

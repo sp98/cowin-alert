@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.cowinalert.ui.theme.CowinAlertTheme
+import com.google.android.material.color.MaterialColors
 
 
 @ExperimentalAnimationApi
@@ -69,7 +71,7 @@ fun AlertScreen(
                         }
                     } else {
                         Button(
-                            onClick = { navController.navigate("CreateAlert") },
+                            onClick = { navController.navigate("CreateAlert")},
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
@@ -125,7 +127,7 @@ fun AlertList(
             Card(
                 modifier = Modifier
                     .padding(8.dp),
-                shape = RoundedCornerShape(15   .dp),
+                shape = RoundedCornerShape(10.dp),
                 border = BorderStroke(1.dp, Color.LightGray),
                 elevation = cardElevation
             ) {
@@ -157,7 +159,7 @@ fun AlertList(
                             ) {
                                 Text(
                                     text = "$totalResults",
-                                    fontSize = 50.sp
+                                    fontSize = 40.sp,
                                 )
                                 CardArrow(expandArrowRotation)
                             }
@@ -171,39 +173,38 @@ fun AlertList(
 
                         ) {
 
-                            Text(text = "Name:  ${alert.name}", style = MaterialTheme.typography.body1)
-                            Spacer(Modifier.padding(3.dp))
-                            Text(text = "Pincode:  ${alert.pinCode}", style = MaterialTheme.typography.body1)
+                            Text(text = "Name:  ${alert.name}", style = MaterialTheme.typography.h5)
                         }
                     }
 
-                    Row() {
+                    Row(
+                        modifier = Modifier
+                            .padding(10.dp)
+                    ) {
                         AnimatedVisibility(
                             visible = alert.alertID == expandedAlertID,
                         ) {
-
-                            Divider()
-
-                            Column() {
+                            Column(){
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ){
-                                    if (vaccines != "" || ageGroup != "") {
-                                        Text(text = "vaccines: $vaccines")
-                                        Text(text = "age limit: $ageGroup")
-                                    }
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = "Pincode:  ${alert.pinCode}")
+                                    Text(text = "Vaccines: $vaccines")
+                                    Text(text = "Age limit: $ageGroup")
                                 }
-                                if (totalResults > 0) {
-                                    ResultList(results!!)
-                                } else {
-                                    Text(
-                                        "No alerts triggered",
-                                        modifier = Modifier.padding(10.dp)
-                                    )
+                                Divider(thickness = 3.dp, )
+                                Column() {
+                                    if (totalResults > 0) {
+                                        ResultList(results!!)
+                                    } else {
+                                        Text(
+                                            "No alerts triggered",
+                                            modifier = Modifier.padding(10.dp)
+                                        )
+                                    }
                                 }
                             }
 
@@ -222,14 +223,44 @@ fun AlertList(
 fun ResultList(
     results: List<Result>
 ) {
-    LazyColumn() {
+    LazyRow() {
         items(items = results) { result ->
-            Column() {
-                Text(text = "${result.hospitalName}")
+
+            Card(
+                modifier = Modifier
+                    .padding(8.dp),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(2.dp, Color.LightGray),
+                elevation = 10.dp
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp)
+                ) {
+                    Text(
+                        text = "Hospital: ${result.hospitalName}"
+                    )
+                    Text(
+                        text = "Address: ${result.address}"
+                    )
+                    Text(
+                        text = "Fee Type: ${result.feeType}"
+                    )
+                    Text(
+                        text = "Capacity: ${result.availableCapacity}"
+                    )
+                    Text(
+                        text = "Dose 1: ${result.dose1Capacity}"
+                    )
+                    Text(
+                        text = "Dose 2: ${result.dose2Capacity}"
+                    )
+
+                }
             }
-            Divider()
         }
     }
+
 
 }
 
@@ -297,12 +328,85 @@ fun PreviewHomeScreen() {
                 districtName = "faridabad",
                 blockName = "NIT-2",
                 feeType = "paid",
+                availableCapacity = 20,
+                dose1Capacity = 10,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                availableCapacity = 20,
+                dose1Capacity = 10,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                dose1Capacity = 10,
+                availableCapacity = 20,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                availableCapacity = 20,
+                dose1Capacity = 10,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                dose1Capacity = 10,
+                availableCapacity = 20,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                dose1Capacity = 10,
+                availableCapacity = 20,
+                dose2Capacity = 20,
+            ),
+            Result(
+                alertID = alerts[0].alertID,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                availableCapacity = 20,
                 dose1Capacity = 10,
                 dose2Capacity = 20,
             ),
         )
     )
 
-    AlertList(alerts, resultMap, selectedAlerts, alerts[2].alertID, {}, {})
+    AlertList(alerts, resultMap, selectedAlerts, alerts[0].alertID, {}, {})
 }
 
