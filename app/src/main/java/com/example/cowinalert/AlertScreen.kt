@@ -1,32 +1,44 @@
 package com.example.cowinalert
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideIn
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import com.example.cowinalert.ui.theme.CowinAlertTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
+@ExperimentalAnimationApi
 @Composable
 fun AlertScreen(
     alerts: List<Alert>,
+    results: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
+    expandedAlertID: Long,
+    onExpandAlertStateChange: (Long) -> Unit,
     navController: NavController
 ) {
     CowinAlertTheme() {
@@ -70,7 +82,10 @@ fun AlertScreen(
             ) {
                 AlertList(
                     alerts,
+                    results,
                     selectedAlerts,
+                    expandedAlertID,
+                    onExpandAlertStateChange,
                     onAlertSelect,
                 )
             }
@@ -79,16 +94,23 @@ fun AlertScreen(
 }
 
 
+@ExperimentalAnimationApi
 @Composable
 fun AlertList(
     alerts: List<Alert>,
+    resultMap: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
+    expandedAlertID: Long,
+    onExpandAlertStateChange: (Long) -> Unit,
     onAlertSelect: (Long) -> Unit
 ) {
     LazyColumn(
-        //contentPadding = PaddingValues(top = 10.dp)
+        contentPadding = PaddingValues(top = 10.dp)
     ) {
         items(items = alerts) { alert ->
+            val results = resultMap[alert.alertID]
+            val expand = expandedAlertID == alert.alertID
+            val totalResults = results?.let { results.size } ?: 0
             val vaccines: String = getVaccines(alert)
             val ageGroup: String = getAgeGroups(alert)
             val selectedAlertBackground = if (selectedAlerts.contains(alert.alertID)) {
@@ -96,45 +118,130 @@ fun AlertList(
             } else {
                 MaterialTheme.colors.background
             }
-            println("Hi $selectedAlertBackground")
-            Column(modifier = Modifier
-                .selectable(
-                    selected = selectedAlerts.contains(alert.alertID),
-                    onClick = {
-                        onAlertSelect(alert.alertID)
-                        println("Hello $selectedAlerts")
+            val expandArrowRotation = if (expand) 90f else 0f
+            val cardElevation = if (expand) 15.dp else 3.dp
+
+            Card(
+                modifier = Modifier
+                    .padding(10.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, Color.LightGray),
+                elevation = cardElevation
+            ) {
+                Column() {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(selectedAlertBackground)
+                            .pointerInput(selectedAlerts) {
+                                detectTapGestures(
+                                    onLongPress = {
+                                        onAlertSelect(alert.alertID)
+                                    },
+                                    onTap = {
+                                        if (selectedAlerts.isNotEmpty()) {
+                                            onAlertSelect(alert.alertID)
+                                        } else {
+                                            onExpandAlertStateChange(alert.alertID)
+                                        }
+                                    }
+                                )
+                            },
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(20.dp),
+                            ) {
+                                Text(
+                                    text = "$totalResults",
+                                    fontSize = 50.sp
+                                )
+                                CardArrow(expandArrowRotation)
+                            }
+
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .weight(2f)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(text = alert.name)
+                                Text(text = "${alert.pinCode}")
+                            }
+
+                            if (vaccines != "" || ageGroup != "") {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = vaccines)
+                                    Text(text = ageGroup)
+                                }
+                            }
+                        }
                     }
-                )
-                .background(selectedAlertBackground)) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "name: " + alert.name)
-                    Text(text = "pin: " + alert.pinCode)
+
+                    Row() {
+                        AnimatedVisibility(
+                            visible = alert.alertID == expandedAlertID,
+                        ) {
+                            Divider()
+                            if (totalResults > 0) {
+                                ResultList(results!!)
+                            } else {
+                                Text(
+                                    "No alerts triggered",
+                                    modifier = Modifier.padding(10.dp)
+                                )
+                            }
+                        }
+                    }
                 }
 
-                if (vaccines != "" || ageGroup != "") {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "vaccine: $vaccines")
-                        Text(text = "age: $ageGroup")
-                    }
-                }
+
             }
 
-            Divider()
         }
 
     }
 }
 
+
+@Composable
+fun ResultList(
+    results: List<Result>
+) {
+    LazyColumn() {
+        items(items = results) { result ->
+            Column() {
+                Text(text = "${result.hospitalName}")
+            }
+            Divider()
+        }
+    }
+
+}
+
+@Composable
+fun CardArrow(
+    degree: Float,
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_expand),
+        contentDescription = "arrow",
+        modifier = Modifier.rotate(degree)
+    )
+}
 
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
@@ -168,6 +275,7 @@ fun getAgeGroups(alert: Alert): String {
 }
 
 
+@ExperimentalAnimationApi
 @Preview(name = "Alert List")
 @Composable
 fun PreviewHomeScreen() {
@@ -176,6 +284,24 @@ fun PreviewHomeScreen() {
         Alert(alertID = 2, name = "alert2", pinCode = 123),
         Alert(alertID = 3, name = "alert3", pinCode = 123),
     )
-    val selectedItems: MutableList<Long> = mutableListOf(1, 2)
-    // AlertList(alerts, selectedItems)
+
+    val selectedAlerts = listOf<Long>()
+    val resultMap = mapOf(
+        alerts[0].alertID to listOf<Result>(
+            Result(
+                alertID = alerts[0].alertID,
+                resultID = 1,
+                hospitalName = "test hospital",
+                address = "2c/46",
+                stateName = "Haryana",
+                districtName = "faridabad",
+                blockName = "NIT-2",
+                feeType = "paid",
+                dose1Capacity = 10,
+                dose2Capacity = 20,
+            ),
+        )
+    )
+
+    AlertList(alerts, resultMap, selectedAlerts, alerts[2].alertID, {}, {})
 }

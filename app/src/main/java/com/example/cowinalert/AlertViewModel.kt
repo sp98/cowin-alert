@@ -5,19 +5,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.Exception
 
 class AlertViewModel(
     val database: AlertDatabaseDao
 ) : ViewModel() {
 
     lateinit var alerts: LiveData<List<Alert>>
+    lateinit var result: LiveData<Map<Long, List<Result>>>
 
     private val viewModelJob = Job()
     private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -25,9 +22,8 @@ class AlertViewModel(
     var selectedAlerts: List<Long> by mutableStateOf(listOf())
         private set
 
-    private val _result = MutableLiveData<Centers>()
-    val result: LiveData<Centers>
-        get() = _result
+    var expandedAlert:Long by mutableStateOf(-1)
+        private set
 
     init {
         initialize()
@@ -40,34 +36,57 @@ class AlertViewModel(
         }
     }
 
-    fun updateSelectedAlerts(id: Long){
-        if (selectedAlerts.contains(id)){
-            selectedAlerts = selectedAlerts.toMutableList().also {
+    fun updateExpandedAlert(id: Long){
+        expandedAlert = if (expandedAlert == id) -1 else id
+    }
+
+    fun updateSelectedAlerts(id: Long) {
+        selectedAlerts = if (selectedAlerts.contains(id)) {
+            selectedAlerts.toMutableList().also {
                 it.remove(id)
             }
         } else {
-            selectedAlerts = selectedAlerts + listOf(id)
+            selectedAlerts + listOf(id)
         }
     }
 
 
-    private suspend fun initializeAlerts(){
-        withContext(Dispatchers.IO){
+    private suspend fun initializeAlerts() {
+        withContext(Dispatchers.IO) {
             alerts = database.getAllAlerts()
+            val resultList = database.getAllResults()
+            var op: Map<Long, List<Result>> = mapOf()
+            val resultMap = Transformations.map(resultList) {
+                for (r in it) {
+                    if (op.containsKey(r.alertID)) {
+                        if (op[r.alertID]?.contains(it) != true) {
+                            op[r.alertID]?.toMutableList()?.add(r)
+                        }
+                    } else {
+                        op[r.alertID]?.toMutableList()?.add(r)
+                    }
+                }
+                op
+            }
+
+            println(" hello -- $resultMap")
+            result = resultMap
+
+
         }
     }
 
-    fun deleteAlerts(){
+    fun deleteAlerts() {
         println("deleting alerts $selectedAlerts")
-        uiscope.launch{
+        uiscope.launch {
             delete()
         }
     }
 
-    private suspend fun delete(){
-        withContext(Dispatchers.IO){
-            for(alertID in selectedAlerts){
-                database.delete(alertID)
+    private suspend fun delete() {
+        withContext(Dispatchers.IO) {
+            for (alertID in selectedAlerts) {
+                database.deleteAlert(alertID)
                 updateSelectedAlerts(alertID)
             }
         }

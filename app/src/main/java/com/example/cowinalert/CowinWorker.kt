@@ -1,16 +1,11 @@
 package com.example.cowinalert
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
-import okhttp3.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
-import java.lang.Exception
 
 class QueryWorker(appContext: Context, workerParams: WorkerParameters)
     : CoroutineWorker(appContext, workerParams){
@@ -35,7 +30,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters)
                         val results = matchFilter(filters, centers)
                         if (results.isNotEmpty()){
                             for (result in results){
-                                database.resultDatabaseDao.insert(result)
+                                database.alertDatabaseDao.insertResult(result)
                             }
                         }
                     }
