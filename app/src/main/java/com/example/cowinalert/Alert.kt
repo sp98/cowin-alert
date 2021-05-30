@@ -55,6 +55,9 @@ data class Result(
     @ColumnInfo(name = "fee_type")
     val feeType: String,
 
+    @ColumnInfo(name = "capacity")
+    val availableCapacity: Int,
+
     @ColumnInfo(name = "dose_1_capacity")
     val dose1Capacity: Int,
 

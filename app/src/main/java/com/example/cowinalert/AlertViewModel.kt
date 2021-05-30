@@ -22,7 +22,7 @@ class AlertViewModel(
     var selectedAlerts: List<Long> by mutableStateOf(listOf())
         private set
 
-    var expandedAlert:Long by mutableStateOf(-1)
+    var expandedAlert: Long by mutableStateOf(-1)
         private set
 
     init {
@@ -36,8 +36,10 @@ class AlertViewModel(
         }
     }
 
-    fun updateExpandedAlert(id: Long){
+    fun updateExpandedAlert(id: Long) {
         expandedAlert = if (expandedAlert == id) -1 else id
+        println("Inserting new result for $id")
+        dummyResults(id)
     }
 
     fun updateSelectedAlerts(id: Long) {
@@ -55,24 +57,10 @@ class AlertViewModel(
         withContext(Dispatchers.IO) {
             alerts = database.getAllAlerts()
             val resultList = database.getAllResults()
-            var op: Map<Long, List<Result>> = mapOf()
-            val resultMap = Transformations.map(resultList) {
-                for (r in it) {
-                    if (op.containsKey(r.alertID)) {
-                        if (op[r.alertID]?.contains(it) != true) {
-                            op[r.alertID]?.toMutableList()?.add(r)
-                        }
-                    } else {
-                        op[r.alertID]?.toMutableList()?.add(r)
-                    }
-                }
-                op
+            val resultMap = Transformations.map(resultList) { it ->
+                it.groupBy  ({ it.alertID }, {it})
             }
-
-            println(" hello -- $resultMap")
             result = resultMap
-
-
         }
     }
 
@@ -87,8 +75,39 @@ class AlertViewModel(
         withContext(Dispatchers.IO) {
             for (alertID in selectedAlerts) {
                 database.deleteAlert(alertID)
+                database.deleteResult(alertID)
                 updateSelectedAlerts(alertID)
             }
+        }
+    }
+
+    fun dummyResults(id: Long) {
+        val r = Result(
+            alertID = id,
+           // resultID = 1,
+            hospitalName = "Mithibai hospital",
+            address = "2c/46",
+            stateName = "Haryana",
+            districtName = "faridabad",
+            blockName = "NIT-2",
+            feeType = "paid",
+            dose1Capacity = 10,
+            dose2Capacity = 45,
+            availableCapacity = 20,
+        )
+
+        insertResult(r)
+    }
+
+    private fun insertResult(r: Result) {
+        uiscope.launch {
+            insertResult2(r)
+        }
+    }
+
+    private suspend fun insertResult2(r: Result) {
+        withContext(Dispatchers.IO) {
+            database.insertResult(r)
         }
     }
 }
