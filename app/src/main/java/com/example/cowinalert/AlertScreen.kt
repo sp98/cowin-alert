@@ -1,5 +1,6 @@
 package com.example.cowinalert
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideIn
@@ -32,7 +33,6 @@ import com.example.cowinalert.ui.theme.CowinAlertTheme
 import com.google.android.material.color.MaterialColors
 
 
-@ExperimentalAnimationApi
 @Composable
 fun AlertScreen(
     alerts: List<Alert>,
@@ -40,8 +40,6 @@ fun AlertScreen(
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
-    expandedAlertID: Long,
-    onExpandAlertStateChange: (Long) -> Unit,
     navController: NavController
 ) {
     CowinAlertTheme() {
@@ -87,9 +85,10 @@ fun AlertScreen(
                     alerts,
                     results,
                     selectedAlerts,
-                    expandedAlertID,
-                    onExpandAlertStateChange,
-                    onAlertSelect
+                    onAlertSelect,
+                    {name, id->
+                        println("navigation args $name , $id")
+                        navController.navigate("results/$name/$id")}
                 )
             }
         }
@@ -97,22 +96,19 @@ fun AlertScreen(
 }
 
 
-@ExperimentalAnimationApi
 @Composable
 fun AlertList(
     alerts: List<Alert>,
     resultMap: Map<Long, List<Result>>,
     selectedAlerts: List<Long>,
-    expandedAlertID: Long,
-    onExpandAlertStateChange: (Long) -> Unit,
     onAlertSelect: (Long) -> Unit,
+    onSeeResults: (String, Long) -> Unit,
 ) {
     LazyColumn(
         //contentPadding = PaddingValues(top = 10.dp)
     ) {
         items(items = alerts) { alert ->
             val results = resultMap[alert.alertID]
-            val expand = expandedAlertID == alert.alertID
             val totalResults = results?.let { results.size } ?: 0
             val vaccines: String = getVaccines(alert)
             val ageGroup: String = getAgeGroups(alert)
@@ -121,15 +117,13 @@ fun AlertList(
             } else {
                 MaterialTheme.colors.background
             }
-            val expandArrowRotation = if (expand) 90f else 0f
-            val cardElevation = if (expand) 15.dp else 3.dp
 
             Card(
                 modifier = Modifier
                     .padding(8.dp),
                 shape = RoundedCornerShape(10.dp),
                 border = BorderStroke(1.dp, Color.LightGray),
-                elevation = cardElevation
+                elevation = 5.dp
             ) {
                 Column() {
                     Row(
@@ -145,7 +139,7 @@ fun AlertList(
                                         if (selectedAlerts.isNotEmpty()) {
                                             onAlertSelect(alert.alertID)
                                         } else {
-                                            onExpandAlertStateChange(alert.alertID)
+                                            onSeeResults(alert.name, alert.alertID)
                                         }
                                     }
                                 )
@@ -161,7 +155,6 @@ fun AlertList(
                                     text = "$totalResults",
                                     fontSize = 40.sp,
                                 )
-                                CardArrow(expandArrowRotation)
                             }
 
                         }
@@ -174,40 +167,9 @@ fun AlertList(
                         ) {
 
                             Text(text = "Name:  ${alert.name}", style = MaterialTheme.typography.h5)
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .padding(10.dp)
-                    ) {
-                        AnimatedVisibility(
-                            visible = alert.alertID == expandedAlertID,
-                        ) {
-                            Column(){
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(text = "Pincode:  ${alert.pinCode}")
-                                    Text(text = "Vaccines: $vaccines")
-                                    Text(text = "Age limit: $ageGroup")
-                                }
-                                Divider(thickness = 3.dp, )
-                                Column() {
-                                    if (totalResults > 0) {
-                                        ResultList(results!!)
-                                    } else {
-                                        Text(
-                                            "No alerts triggered",
-                                            modifier = Modifier.padding(10.dp)
-                                        )
-                                    }
-                                }
-                            }
-
+                            Text(text = "Pincode:  ${alert.pinCode}")
+                            Text(text = "Vaccines: $vaccines")
+                            Text(text = "Age limit: $ageGroup")
                         }
                     }
 
@@ -219,61 +181,7 @@ fun AlertList(
 }
 
 
-@Composable
-fun ResultList(
-    results: List<Result>
-) {
-    LazyRow() {
-        items(items = results) { result ->
 
-            Card(
-                modifier = Modifier
-                    .padding(8.dp),
-                shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(2.dp, Color.LightGray),
-                elevation = 10.dp
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                ) {
-                    Text(
-                        text = "Hospital: ${result.hospitalName}"
-                    )
-                    Text(
-                        text = "Address: ${result.address}"
-                    )
-                    Text(
-                        text = "Fee Type: ${result.feeType}"
-                    )
-                    Text(
-                        text = "Capacity: ${result.availableCapacity}"
-                    )
-                    Text(
-                        text = "Dose 1: ${result.dose1Capacity}"
-                    )
-                    Text(
-                        text = "Dose 2: ${result.dose2Capacity}"
-                    )
-
-                }
-            }
-        }
-    }
-
-
-}
-
-@Composable
-fun CardArrow(
-    degree: Float,
-) {
-    Icon(
-        painter = painterResource(id = R.drawable.ic_expand),
-        contentDescription = "arrow",
-        modifier = Modifier.rotate(degree)
-    )
-}
 
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
@@ -307,7 +215,6 @@ fun getAgeGroups(alert: Alert): String {
 }
 
 
-@ExperimentalAnimationApi
 @Preview(name = "Alert List")
 @Composable
 fun PreviewHomeScreen() {
@@ -317,96 +224,13 @@ fun PreviewHomeScreen() {
         Alert(alertID = 3, name = "alert3", pinCode = 123),
     )
 
-    val selectedAlerts = listOf<Long>()
-    val resultMap = mapOf(
-        alerts[0].alertID to listOf<Result>(
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                dose1Capacity = 10,
-                availableCapacity = 20,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                dose1Capacity = 10,
-                availableCapacity = 20,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                dose1Capacity = 10,
-                availableCapacity = 20,
-                dose2Capacity = 20,
-            ),
-            Result(
-                alertID = alerts[0].alertID,
-                hospitalName = "test hospital",
-                address = "2c/46",
-                stateName = "Haryana",
-                districtName = "faridabad",
-                blockName = "NIT-2",
-                feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
-            ),
-        )
-    )
+    val resultMap: Map<Long, List<Result>> = mapOf()
+    val selectedAlerts  = listOf<Long>(1)
 
-    AlertList(alerts, resultMap, selectedAlerts, alerts[0].alertID, {}, {})
+//    AlertList(alerts,
+//        resultMap,
+//        selectedAlerts,
+//        {},
+//        {alerts[0].name) -> Unit}
 }
 

@@ -6,9 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
 
 class MainActivity : ComponentActivity() {
     @ExperimentalAnimationApi
@@ -31,18 +30,34 @@ class MainActivity : ComponentActivity() {
                 composable("home"){
                     val alerts = alertViewModel.alerts.observeAsState(listOf()).value
                     val results = alertViewModel.result.observeAsState(mapOf()).value
+                    println("results1 - $results")
                     AlertScreen(
                         alerts = alerts,
                         results = results,
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,
-                        expandedAlertID = alertViewModel.expandedAlert,
-                        onExpandAlertStateChange = alertViewModel::updateExpandedAlert,
                         navController = navController)
                 }
                 composable("createAlert"){
                     CreateAlertScreen(viewModel = createAlertViewModel, navController = navController)
+                }
+
+                composable(
+                    "results/{alertName}/{alertID}",
+                    arguments = listOf(
+                        navArgument("alertName"){type = NavType.StringType},
+                        navArgument("alertID"){type = NavType.LongType}
+                    )
+                ){
+                    val alertName = it.arguments?.getString("alertName")
+                    val alertID = it.arguments?.getLong("alertID")
+                    val results = alertViewModel.result.value?.get(alertID) ?: listOf<Result>()
+                    ResultScreen(
+                        alertName = alertName,
+                        results = results,
+                        onCancel = {navController.navigate("home")}
+                    )
                 }
             }
         }
