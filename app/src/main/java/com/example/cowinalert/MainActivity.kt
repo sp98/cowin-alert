@@ -1,10 +1,12 @@
 package com.example.cowinalert
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -30,7 +32,6 @@ class MainActivity : ComponentActivity() {
                 composable("home"){
                     val alerts = alertViewModel.alerts.observeAsState(listOf()).value
                     val results = alertViewModel.result.observeAsState(mapOf()).value
-                    println("results1 - $results")
                     AlertScreen(
                         alerts = alerts,
                         results = results,

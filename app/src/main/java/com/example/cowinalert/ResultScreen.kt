@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.cowinalert.ui.theme.CowinAlertTheme
 
 @Composable
 fun ResultScreen(
@@ -23,7 +24,7 @@ fun ResultScreen(
     results: List<Result>,
     onCancel: () -> Unit
 ){
-
+    CowinAlertTheme() {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -45,15 +46,16 @@ fun ResultScreen(
         }
     ) {
 
-        if (results.isEmpty()){
+        if (results.isEmpty()) {
 
-            Text("No results found",
-            modifier = Modifier.padding(20.dp))
+            Text(
+                "No results found",
+                modifier = Modifier.padding(20.dp)
+            )
 
-        }else {
+        } else {
             LazyColumn() {
                 items(items = results) { result ->
-
                     Card(
                         modifier = Modifier
                             .padding(8.dp)
@@ -90,7 +92,7 @@ fun ResultScreen(
                 }
             }
         }
-
+    }
 
     }
 }
