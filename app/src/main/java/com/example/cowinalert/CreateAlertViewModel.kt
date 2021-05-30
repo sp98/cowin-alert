@@ -1,8 +1,12 @@
 package com.example.cowinalert
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -12,7 +16,6 @@ import timber.log.Timber
 class CreateAlertViewModel(
     private val database: AlertDatabaseDao
 ) : ViewModel() {
-
     // ViewModel Job for coroutines
     private var viewModelJob = Job()
 
@@ -21,6 +24,8 @@ class CreateAlertViewModel(
         // cancel all coroutines
         viewModelJob.cancel()
     }
+
+    private val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
 
     private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -72,6 +77,9 @@ class CreateAlertViewModel(
 
     fun onCreate(navController: NavController){
         // create instance of alert data class
+        if (!pincodeRegex.matches(pin)) {
+            return
+        }
         val alert = Alert(
             name = name,
             pinCode = pin.toLong(),
