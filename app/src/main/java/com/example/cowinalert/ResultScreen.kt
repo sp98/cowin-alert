@@ -1,21 +1,17 @@
 package com.example.cowinalert
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.cowinalert.ui.theme.CowinAlertTheme
 
 @Composable
@@ -23,76 +19,82 @@ fun ResultScreen(
     alertName: String?,
     results: List<Result>,
     onCancel: () -> Unit
-){
+) {
     CowinAlertTheme() {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Results: $alertName",
-                        textAlign = TextAlign.Center,
-                    )
-                },
-                elevation = 12.dp,
-                actions = {
-                    IconButton(onClick = onCancel) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_close) ,
-                            contentDescription = "close")
+        Scaffold(
+            topBar = {
+                InsetAwareTopAppBar(
+                    title = {
+                        Text(
+                            text = "Results: $alertName",
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    elevation = 12.dp,
+                    actions = {
+                        IconButton(onClick = onCancel) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = "close"
+                            )
+                        }
                     }
-                }
-            )
-        }
-    ) {
+                )
+            }
+        ) {
 
-        if (results.isEmpty()) {
+            if (results.isEmpty()) {
+                Text(
+                    "No results found",
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier.padding(20.dp)
+                )
 
-            Text(
-                "No results found",
-                modifier = Modifier.padding(20.dp)
-            )
-
-        } else {
-            LazyColumn() {
-                items(items = results) { result ->
-                    Card(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(2.dp, Color.LightGray),
-                        elevation = 10.dp
-                    ) {
-                        Column(
+            } else {
+                LazyColumn() {
+                    items(items = results) { result ->
+                        Card(
                             modifier = Modifier
                                 .padding(10.dp)
+                                .fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium,
                         ) {
-                            Text(
-                                text = "Hospital: ${result.hospitalName}"
-                            )
-                            Text(
-                                text = "Address: ${result.address}"
-                            )
-                            Text(
-                                text = "Fee Type: ${result.feeType}"
-                            )
-                            Text(
-                                text = "Capacity: ${result.availableCapacity}"
-                            )
-                            Text(
-                                text = "Dose 1: ${result.dose1Capacity}"
-                            )
-                            Text(
-                                text = "Dose 2: ${result.dose2Capacity}"
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            ) {
+                                Text(
+                                    text = "Hospital: ${result.hospitalName}",
+                                    style = MaterialTheme.typography.h6
+                                )
+                                CowinAlertDivider()
+                                Text(
+                                    text = "Address: ${result.address}",
+                                    style = MaterialTheme.typography.overline
+                                )
+                                Text(
+                                    text = "Available Capacity: ${result.availableCapacity}",
+                                    style = MaterialTheme.typography.overline
+                                )
+                                Text(
+                                    text = "Dose 1 Capacity: ${result.dose1Capacity}",
+                                    style = MaterialTheme.typography.overline
+                                )
+                                Text(
+                                    text = "Dose 2 Capacity: ${result.dose2Capacity}",
+                                    style = MaterialTheme.typography.overline
+                                )
+                                Text(
+                                    text = "Fee Type: ${result.feeType}",
+                                    style = MaterialTheme.typography.overline
+                                )
 
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
     }
 }
@@ -100,7 +102,7 @@ fun ResultScreen(
 
 @Preview(name = "Result Detail Screen")
 @Composable
-fun PreviewResultDetails(){
+fun PreviewResultDetails() {
     val alertID: Long = 0
     val resultMap = mapOf(
         alertID to listOf<Result>(

@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
@@ -36,12 +35,6 @@ class AlertViewModel(
         }
     }
 
-    fun updateExpandedAlert(id: Long) {
-        expandedAlert = if (expandedAlert == id) -1 else id
-        println("Inserting new result for $id")
-        dummyResults(id)
-    }
-
     fun updateSelectedAlerts(id: Long) {
         selectedAlerts = if (selectedAlerts.contains(id)) {
             selectedAlerts.toMutableList().also {
@@ -50,6 +43,8 @@ class AlertViewModel(
         } else {
             selectedAlerts + listOf(id)
         }
+
+        // Todo remove this method after testing
     }
 
 
@@ -58,14 +53,13 @@ class AlertViewModel(
             alerts = database.getAllAlerts()
             val resultList = database.getAllResults()
             val resultMap = Transformations.map(resultList) { it ->
-                it.groupBy  ({ it.alertID }, {it})
+                it.groupBy({ it.alertID }, { it })
             }
             result = resultMap
         }
     }
 
     fun deleteAlerts() {
-        println("deleting alerts $selectedAlerts")
         uiscope.launch {
             delete()
         }
@@ -84,7 +78,7 @@ class AlertViewModel(
     fun dummyResults(id: Long) {
         val r = Result(
             alertID = id,
-           // resultID = 1,
+            // resultID = 1,
             hospitalName = "Mithibai hospital",
             address = "2c/46",
             stateName = "Haryana",

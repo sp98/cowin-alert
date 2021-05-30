@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 
 class AlertViewModelFactory(
     private val dataSource: AlertDatabaseDao
-) : ViewModelProvider.Factory{
+) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AlertViewModel::class.java)) {

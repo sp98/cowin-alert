@@ -27,7 +27,7 @@ fun CreateAlertScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
-                    ){
+                    ) {
                         Button(
                             onClick = { navController.navigate("Home") },
                             modifier = Modifier
@@ -48,14 +48,14 @@ fun CreateAlertScreen(
 
                 },
                 topBar = {
-                    TopAppBar (
+                    InsetAwareTopAppBar(
                         title = {
                             Text(
                                 text = "Create Alert",
                                 textAlign = TextAlign.Center
                             )
                         }
-                            )
+                    )
                 }
             ) {
 
@@ -97,7 +97,7 @@ fun CreateAlertScreen(
 
                     Spacer(modifier = Modifier.padding(4.dp))
 
-                    Text(text="Select age group:", style = MaterialTheme.typography.caption)
+                    Text(text = "Select age group:", style = MaterialTheme.typography.caption)
 
                     // above 45 checkbox
                     CheckboxComponent(
@@ -130,7 +130,7 @@ fun AlertTextField(value: String, onValueChange: (String) -> Unit, placeholder: 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(placeholder)},
+        label = { Text(placeholder) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
     )
@@ -143,15 +143,15 @@ fun CheckboxComponent(
     checkBoxText: String
 ) {
 
-    val checkboxBorderColor = if (checked){
+    val checkboxBorderColor = if (checked) {
         MaterialTheme.colors.primary.copy(alpha = 0.5f)
-    }else{
+    } else {
         MaterialTheme.colors.primary.copy(alpha = 0.12f)
     }
 
-    val checkboxBackgroundColor = if (checked){
+    val checkboxBackgroundColor = if (checked) {
         MaterialTheme.colors.primary.copy(alpha = 0.12f)
-    }else{
+    } else {
         MaterialTheme.colors.background
     }
 
@@ -164,15 +164,16 @@ fun CheckboxComponent(
         modifier = Modifier
             .padding(vertical = 8.dp)
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .background(checkboxBackgroundColor)
-            .clickable(
-                onClick = {
-                    onCheckedChange(!checked)
-                }
-            )
-            .padding(vertical = 16.dp, horizontal = 16.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(checkboxBackgroundColor)
+                .clickable(
+                    onClick = {
+                        onCheckedChange(!checked)
+                    }
+                )
+                .padding(vertical = 16.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
