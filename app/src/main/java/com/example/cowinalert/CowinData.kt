@@ -4,10 +4,10 @@ import com.squareup.moshi.Json
 
 
 data class Centers(
-    val centers : List<Center>
+    val centers: List<Center>
 )
 
-data class Center (
+data class Center(
     @Json(name = "center_id")
     val centerID: Double,
     val name: String,
@@ -26,7 +26,7 @@ data class Center (
     @Json(name = "fee_type")
     val feeType: String,
     val sessions: List<Session>
-        )
+)
 
 data class Session(
     @Json(name = "session_id")

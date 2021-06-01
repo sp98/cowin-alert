@@ -1,12 +1,8 @@
 package com.example.cowinalert
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -41,32 +37,32 @@ class CreateAlertViewModel(
 
     var isBelow45: Boolean by mutableStateOf(false)
 
-    fun onNameChange(newName:String){
+    fun onNameChange(newName: String) {
         Timber.i("name changing")
         name = newName
     }
 
-    fun onPinChange(newPin:String){
+    fun onPinChange(newPin: String) {
         pin = newPin
     }
 
-    fun onCovishieldCheck(covishield:Boolean){
+    fun onCovishieldCheck(covishield: Boolean) {
         isCovishield = covishield
     }
 
-    fun onCovaxinCheck(covaxin:Boolean) {
+    fun onCovaxinCheck(covaxin: Boolean) {
         isCovaxin = covaxin
     }
 
-    fun onAbove45check(above45:Boolean){
+    fun onAbove45check(above45: Boolean) {
         isAbove45 = above45
     }
 
-    fun onBelow45Check(below45: Boolean){
+    fun onBelow45Check(below45: Boolean) {
         isBelow45 = below45
     }
 
-    private fun reset(){
+    private fun reset() {
         name = ""
         pin = ""
         isCovishield = false
@@ -75,7 +71,7 @@ class CreateAlertViewModel(
         isBelow45 = false
     }
 
-    fun onCreate(navController: NavController){
+    fun onCreate(navController: NavController) {
         // create instance of alert data class
         if (!pincodeRegex.matches(pin)) {
             return
@@ -87,7 +83,7 @@ class CreateAlertViewModel(
             isCovaxin = isCovaxin,
             above45 = isAbove45,
             below45 = isBelow45,
-            )
+        )
 
         // save alert to database
         onInsert(alert)
@@ -98,14 +94,14 @@ class CreateAlertViewModel(
         navController.navigate("Home")
     }
 
-    private fun onInsert(alert:Alert){
+    private fun onInsert(alert: Alert) {
         uiscope.launch {
             insert(alert)
         }
     }
 
-    private suspend fun insert(alert: Alert){
-        withContext(Dispatchers.IO){
+    private suspend fun insert(alert: Alert) {
+        withContext(Dispatchers.IO) {
             database.insertAlert(alert)
         }
     }

@@ -8,15 +8,15 @@ import androidx.room.PrimaryKey
 data class Alert(
 
     @PrimaryKey(autoGenerate = true)
-    val alertID:Long = 0L,
+    val alertID: Long = 0L,
 
     @ColumnInfo(name = "alert_name")
     val name: String,
 
-    @ColumnInfo(name= "pincode")
+    @ColumnInfo(name = "pincode")
     val pinCode: Long,
 
-    @ColumnInfo(name= "isCovishield")
+    @ColumnInfo(name = "isCovishield")
     val isCovishield: Boolean = false,
 
     @ColumnInfo(name = "isCovaxin")
@@ -33,9 +33,9 @@ data class Alert(
 @Entity(tableName = "cowin_result_table")
 data class Result(
     @PrimaryKey(autoGenerate = true)
-    val resultID:Long = 0L,
+    val resultID: Long = 0L,
 
-    val alertID:Long,
+    val alertID: Long,
 
     @ColumnInfo(name = "hospital_name")
     val hospitalName: String,
@@ -64,4 +64,4 @@ data class Result(
     @ColumnInfo(name = "dose_2_capacity")
     val dose2Capacity: Int,
 
-)
+    )
