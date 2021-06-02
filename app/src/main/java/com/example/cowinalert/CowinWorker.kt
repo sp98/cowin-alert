@@ -95,9 +95,10 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                     availableOn = session.date
                                 )
                                 results += listOf(result)
-                                triggeredAlertNames += listOf(filter.name)
+                                if (!triggeredAlertNames.contains(filter.name)){
+                                    triggeredAlertNames += listOf(filter.name)
+                                }
                             }
-
                         }
                     }
                 }
