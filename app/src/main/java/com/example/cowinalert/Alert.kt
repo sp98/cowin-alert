@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
 @Entity(tableName = "cowin_alert_table")
 data class Alert(
 
@@ -27,7 +28,16 @@ data class Alert(
 
     @ColumnInfo(name = "below45")
     val below45: Boolean = false,
-)
+
+    @ColumnInfo(name = "isDose1")
+    val dose1: Boolean = false,
+
+    @ColumnInfo(name = "isDose2")
+    val dose2: Boolean = false,
+
+    @ColumnInfo(name = "status")
+    val status: String = "enabled",
+    )
 
 
 @Entity(tableName = "cowin_result_table")
@@ -64,4 +74,7 @@ data class Result(
     @ColumnInfo(name = "dose_2_capacity")
     val dose2Capacity: Int,
 
-    )
+    @ColumnInfo(name = "triggered_on")
+    val triggeredOn: String = ""
+
+)

@@ -27,7 +27,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
             val filters = database.alertDatabaseDao.getAlertList()
 
             if (isCorrectTime() && filters.isNotEmpty()) {
-                val today = getDate()
+                val today = getFormattedTime("dd-MM-yyyy")
                 val uniqueAlerts = database.alertDatabaseDao.getUniqueAlertList()
                 val pincodes = uniqueAlerts.map {
                     it.pinCode.toString()
@@ -70,7 +70,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         centers: List<Center>
     ): MyResult {
         var results: List<com.example.cowinalert.Result> = ArrayList()
-        var triggerdAlertNames: List<String> = ArrayList()
+        var triggeredAlertNames: List<String> = ArrayList()
         for (center in centers) {
             val sessions = center.sessions
             for (session in sessions) {
@@ -88,26 +88,27 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                 feeType = center.feeType,
                                 availableCapacity = session.availableCapacity,
                                 dose1Capacity = session.availableCapacityDose1,
-                                dose2Capacity = session.availableCapacityDose2
+                                dose2Capacity = session.availableCapacityDose2,
+                                triggeredOn = getFormattedTime("dd-MM-yyyy HH:mm")
                             )
                             results = results + listOf<com.example.cowinalert.Result>(result)
-                            triggerdAlertNames = triggerdAlertNames + listOf(filter.name)
+                            triggeredAlertNames = triggeredAlertNames + listOf(filter.name)
                         }
                     }
                 }
             }
         }
-        return MyResult(results, triggerdAlertNames)
+        return MyResult(results, triggeredAlertNames)
     }
 
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(16, 0, 0))
+        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(18, 0, 0))
     }
 
-    private fun getDate(): String {
+    private fun getFormattedTime(pattern: String): String {
         val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val formatter = DateTimeFormatter.ofPattern(pattern)
         return current.format(formatter)
     }
 

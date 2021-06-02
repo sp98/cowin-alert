@@ -64,8 +64,12 @@ fun ResultScreen(
                                     .padding(10.dp)
                             ) {
                                 Text(
-                                    text = "Hospital: ${result.hospitalName}",
+                                    text = "Triggered On: ${result.triggeredOn}",
                                     style = MaterialTheme.typography.h6
+                                )
+                                Text(
+                                    text = "Hospital: ${result.hospitalName}",
+                                    style = MaterialTheme.typography.body1
                                 )
                                 CowinAlertDivider()
                                 Text(
@@ -117,6 +121,7 @@ fun PreviewResultDetails() {
                 availableCapacity = 20,
                 dose1Capacity = 10,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -129,6 +134,7 @@ fun PreviewResultDetails() {
                 availableCapacity = 20,
                 dose1Capacity = 10,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -141,6 +147,7 @@ fun PreviewResultDetails() {
                 dose1Capacity = 10,
                 availableCapacity = 20,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -153,6 +160,7 @@ fun PreviewResultDetails() {
                 availableCapacity = 20,
                 dose1Capacity = 10,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -165,6 +173,7 @@ fun PreviewResultDetails() {
                 dose1Capacity = 10,
                 availableCapacity = 20,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -177,6 +186,7 @@ fun PreviewResultDetails() {
                 dose1Capacity = 10,
                 availableCapacity = 20,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
             Result(
                 alertID = alertID,
@@ -189,6 +199,7 @@ fun PreviewResultDetails() {
                 availableCapacity = 20,
                 dose1Capacity = 10,
                 dose2Capacity = 20,
+                triggeredOn = "08-06-2020 08:45"
             ),
         )
     )
