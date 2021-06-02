@@ -92,7 +92,8 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                     dose1Capacity = session.availableCapacityDose1,
                                     dose2Capacity = session.availableCapacityDose2,
                                     triggeredOn = getFormattedTime("dd-MM-yyyy HH:mm"),
-                                    availableOn = session.date
+                                    availableOn = session.date,
+                                    ageGroup = session.minAgeLimit
                                 )
                                 results += listOf(result)
                                 if (!triggeredAlertNames.contains(filter.name)){
@@ -139,7 +140,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(21, 0, 0))
+        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(23, 30, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {

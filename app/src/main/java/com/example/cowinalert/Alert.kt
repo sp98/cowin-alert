@@ -45,39 +45,42 @@ data class Result(
     @PrimaryKey(autoGenerate = true)
     val resultID: Long = 0L,
 
-    val alertID: Long,
+    val alertID: Long = 0L,
 
     @ColumnInfo(name = "hospital_name")
-    val hospitalName: String,
+    val hospitalName: String = "",
 
     @ColumnInfo(name = "address")
-    val address: String,
+    val address: String = "",
 
     @ColumnInfo(name = "state_name")
-    val stateName: String,
+    val stateName: String = "",
 
     @ColumnInfo(name = "district_name")
-    val districtName: String,
+    val districtName: String = "",
 
     @ColumnInfo(name = "block_name")
-    val blockName: String,
+    val blockName: String = "",
 
     @ColumnInfo(name = "fee_type")
-    val feeType: String,
+    val feeType: String = "",
 
     @ColumnInfo(name = "capacity")
-    val availableCapacity: Int,
+    val availableCapacity: Int = -1,
 
     @ColumnInfo(name = "dose_1_capacity")
-    val dose1Capacity: Int,
+    val dose1Capacity: Int = -1,
 
     @ColumnInfo(name = "dose_2_capacity")
-    val dose2Capacity: Int,
+    val dose2Capacity: Int = -1,
 
     @ColumnInfo(name = "triggered_on")
     val triggeredOn: String = "",
 
     @ColumnInfo(name = "available_on")
-    val availableOn: String = ""
+    val availableOn: String = "",
+
+    @ColumnInfo(name = "age_group")
+    val ageGroup: Int = -1,
 
 )

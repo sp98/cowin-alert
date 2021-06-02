@@ -5,7 +5,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -63,10 +67,14 @@ class MainActivity : ComponentActivity() {
                     val alertName = it.arguments?.getString("alertName")
                     val alertID = it.arguments?.getLong("alertID")
                     val results = alertViewModel.result.value?.get(alertID) ?: listOf<Result>()
+                    var selectedResult  by remember { mutableStateOf(Result()) }
                     ResultScreen(
                         alertName = alertName,
                         results = results,
-                        onCancel = { navController.navigate("home") }
+                        onCancel = { navController.navigate("home") },
+                        selectedResult = selectedResult,
+                        onSelectResult = {  selectedResult = it }
+
                     )
                 }
             }

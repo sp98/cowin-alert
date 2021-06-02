@@ -69,7 +69,7 @@ class MyApplication : Application() {
 
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             QueryWorker.WORK_NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             oneTimeRequest
         )
     }
