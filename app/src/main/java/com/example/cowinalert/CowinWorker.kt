@@ -1,6 +1,15 @@
 package com.example.cowinalert
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -35,6 +44,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     for (result in results) {
                         database.alertDatabaseDao.insertResult(result)
                     }
+                    sendNotification()
                 }
             }
              Result.retry()
@@ -88,6 +98,23 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         return current.format(formatter)
+    }
+
+
+    private fun sendNotification(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+        val notificationManager = NotificationManagerCompat.from(applicationContext)
+        val notificationBuilder = NotificationCompat.Builder(applicationContext, "CowinChannel")
+            .setSmallIcon(R.drawable.icon)
+            .setContentTitle("Cowin Alert")
+            .setContentText("Dummy description")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        notificationManager.notify(1001, notificationBuilder.build())
+
     }
 
 }
