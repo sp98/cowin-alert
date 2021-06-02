@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
@@ -13,38 +14,28 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
+    CoroutineWorker(appContext, workerParams) {
 
     companion object {
         const val WORK_NAME = "QueryCowinAPI"
     }
 
-    override fun doWork(): Result  {
-        val database = AlertDatabase.getInstance(applicationContext)
-        val filters = database.alertDatabaseDao.getAlertList()
-
-        // call cowin API to get all the results if user has set filters
-        return try {
+    override suspend fun doWork(): Result = coroutineScope{
+         try {
+             val database = AlertDatabase.getInstance(applicationContext)
+             val filters = database.alertDatabaseDao.getAlertList()
             if (isCorrectTime() && filters.isNotEmpty()) {
-                val current = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                var dateToday: String =  current.format(formatter)
-                CowinAPI.retrofitService.getCowinData("121001", dateToday).enqueue(object : Callback<Centers> {
-                    override fun onResponse(call: Call<Centers>, response: Response<Centers>) {
-                        val centers = response.body()?.centers!!
-                        val results = matchFilter(filters, centers)
-                        if (results.isNotEmpty()) {
-                            for (result in results) {
-                                database.alertDatabaseDao.insertResult(result)
-                            }
-                        }
+                val date = getDate()
+                var  results: List<com.example.cowinalert.Result> = listOf()
+                val centers = CowinAPI.retrofitService.getCowinData("121001", date).execute().body()
+                if (centers != null){
+                    results = matchFilter(filters, centers.centers)
+                }
+                if (results.isNotEmpty()) {
+                    for (result in results) {
+                        database.alertDatabaseDao.insertResult(result)
                     }
-
-                    override fun onFailure(call: Call<Centers>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
+                }
             }
              Result.retry()
         } catch (e: Exception) {
@@ -91,6 +82,12 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     private fun isCorrectTime():Boolean{
         val now = LocalTime.now()
         return  now.isAfter(LocalTime.of(8, 0, 0 )) && now.isBefore(LocalTime.of(16, 0, 0 ))
+    }
+
+    private fun getDate(): String{
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        return current.format(formatter)
     }
 
 }

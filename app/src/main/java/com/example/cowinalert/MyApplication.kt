@@ -30,7 +30,7 @@ class MyApplication : Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val repeatingRequest = OneTimeWorkRequestBuilder<QueryWorker>()
+        val oneTimeRequest = OneTimeWorkRequestBuilder<QueryWorker>()
             .setConstraints(constraints)
             .addTag("CowinQuery")
             .setBackoffCriteria(
@@ -40,6 +40,9 @@ class MyApplication : Application() {
             )
             .build()
 
-        WorkManager.getInstance(applicationContext).enqueue(repeatingRequest)
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            QueryWorker.WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            oneTimeRequest)
     }
 }
