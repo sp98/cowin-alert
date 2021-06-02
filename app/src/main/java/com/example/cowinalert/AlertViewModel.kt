@@ -43,8 +43,6 @@ class AlertViewModel(
         } else {
             selectedAlerts + listOf(id)
         }
-
-        // Todo remove this method after testing
     }
 
 

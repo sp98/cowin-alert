@@ -13,6 +13,9 @@ interface AlertDatabaseDao {
     @Query("SELECT * FROM cowin_alert_table ORDER BY  alertID DESC")
     fun getAllAlerts(): LiveData<List<Alert>>
 
+    @Query("SELECT * FROM cowin_alert_table ORDER BY  alertID DESC")
+    fun getAlertList(): List<Alert>
+
     @Query("DELETE FROM cowin_alert_table WHERE alertID = :key")
     fun deleteAlert(key: Long)
 

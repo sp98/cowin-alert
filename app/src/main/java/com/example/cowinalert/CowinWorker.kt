@@ -1,8 +1,10 @@
 package com.example.cowinalert
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -17,13 +19,13 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         const val WORK_NAME = "QueryCowinAPI"
     }
 
-    override fun doWork(): Result {
+    override fun doWork(): Result  {
         val database = AlertDatabase.getInstance(applicationContext)
-        val filters = database.alertDatabaseDao.getAllAlerts().value
+        val filters = database.alertDatabaseDao.getAlertList()
 
         // call cowin API to get all the results if user has set filters
         return try {
-            if (isCorrectTime() && filters!!.isNotEmpty()) {
+            if (isCorrectTime() && filters.isNotEmpty()) {
                 val current = LocalDateTime.now()
                 val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
                 var dateToday: String =  current.format(formatter)
@@ -44,10 +46,10 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
                 })
             }
-            return Result.retry()
+             Result.retry()
         } catch (e: Exception) {
             println("failed with exception ${e.message}")
-            return Result.retry()
+             Result.retry()
         }
 
     }
