@@ -21,8 +21,6 @@ class CreateAlertViewModel(
         viewModelJob.cancel()
     }
 
-    private val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
-
     private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     var name: String by mutableStateOf("")
@@ -73,9 +71,6 @@ class CreateAlertViewModel(
 
     fun onCreate(navController: NavController) {
         // create instance of alert data class
-        if (!pincodeRegex.matches(pin)) {
-            return
-        }
         val alert = Alert(
             name = name,
             pinCode = pin.toLong(),

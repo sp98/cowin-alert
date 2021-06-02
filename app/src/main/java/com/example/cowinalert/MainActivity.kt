@@ -32,9 +32,12 @@ class MainActivity : ComponentActivity() {
                 composable("home") {
                     val alerts = alertViewModel.alerts.observeAsState(listOf()).value
                     val results = alertViewModel.result.observeAsState(mapOf()).value
+                    val pincodesUsed = alertViewModel.pincodesUsed.observeAsState(listOf()).value
                     AlertScreen(
                         alerts = alerts,
                         results = results,
+                        maxAllowedPins = alertViewModel.maxPincodesAllowed,
+                        pincodesUsed= pincodesUsed,
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,

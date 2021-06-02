@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,8 @@ fun CreateAlertScreen(
     viewModel: CreateAlertViewModel,
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
     CowinAlertTheme() {
         Surface() {
             Scaffold(
@@ -38,7 +41,13 @@ fun CreateAlertScreen(
 
                         Button(
                             enabled = viewModel.name.isNotEmpty() && viewModel.pin.isNotEmpty(),
-                            onClick = { viewModel.onCreate(navController) },
+                            onClick = {
+                                if (!pincodeRegex.matches(viewModel.pin)) {
+                                    showToastMsg(context, "Invalid pincode ${viewModel.pin}")
+                                } else {
+                                    viewModel.onCreate(navController)
+                                }
+                                      },
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {

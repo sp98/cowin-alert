@@ -1,5 +1,7 @@
 package com.example.cowinalert
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -28,11 +31,15 @@ import com.google.accompanist.insets.statusBarsPadding
 fun AlertScreen(
     alerts: List<Alert>,
     results: Map<Long, List<Result>>,
+    maxAllowedPins: Int,
+    pincodesUsed : List<String>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
     navController: NavController
 ) {
+
+    val context = LocalContext.current
     CowinAlertTheme() {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
@@ -44,9 +51,6 @@ fun AlertScreen(
                                 textAlign = TextAlign.Center
                             )
                         },
-//                        modifier = Modifier
-//                            .fillMaxWidth(),
-//                        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.9f)
                     )
                 },
                 bottomBar = {
@@ -63,7 +67,14 @@ fun AlertScreen(
                         }
                     } else {
                         Button(
-                            onClick = { navController.navigate("CreateAlert") },
+                            onClick = {
+                                if (pincodesUsed.size == maxAllowedPins){
+                                    val msg = "reached max pincode limit of $maxAllowedPins"
+                                    showToastMsg(context, msg)
+                                } else {
+                                    navController.navigate("CreateAlert")
+                                }
+                                      },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
@@ -226,6 +237,10 @@ fun InsetAwareTopAppBar(
     }
 }
 
+fun showToastMsg(context: Context, msg: String ){
+    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+
+}
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
     if (alert.isCovishield && alert.isCovaxin) {
