@@ -47,7 +47,7 @@ fun CreateAlertScreen(
                                 } else {
                                     viewModel.onCreate(navController)
                                 }
-                                      },
+                            },
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {

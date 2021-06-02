@@ -32,7 +32,7 @@ fun AlertScreen(
     alerts: List<Alert>,
     results: Map<Long, List<Result>>,
     maxAllowedPins: Int,
-    pincodesUsed : List<String>,
+    pincodesUsed: List<String>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onDeleteAlerts: () -> Unit,
@@ -68,13 +68,13 @@ fun AlertScreen(
                     } else {
                         Button(
                             onClick = {
-                                if (pincodesUsed.size == maxAllowedPins){
+                                if (pincodesUsed.size == maxAllowedPins) {
                                     val msg = "reached max pincode limit of $maxAllowedPins"
                                     showToastMsg(context, msg)
                                 } else {
                                     navController.navigate("CreateAlert")
                                 }
-                                      },
+                            },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth()
@@ -237,10 +237,11 @@ fun InsetAwareTopAppBar(
     }
 }
 
-fun showToastMsg(context: Context, msg: String ){
+fun showToastMsg(context: Context, msg: String) {
     Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 
 }
+
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
     if (alert.isCovishield && alert.isCovaxin) {

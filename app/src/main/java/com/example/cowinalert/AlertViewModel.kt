@@ -58,7 +58,7 @@ class AlertViewModel(
                 it.groupBy({ it.alertID }, { it })
             }
             val pins = Transformations.map(pincodes) { it ->
-                it.map{
+                it.map {
                     it.pinCode.toString()
                 }
             }

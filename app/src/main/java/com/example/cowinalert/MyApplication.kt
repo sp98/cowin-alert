@@ -38,7 +38,8 @@ class MyApplication : Application() {
             notificationChannel.enableVibration(true)
 
             // get reference to the notification manager and create notification channels
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(notificationChannel)
         }
 

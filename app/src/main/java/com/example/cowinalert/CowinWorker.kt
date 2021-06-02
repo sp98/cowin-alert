@@ -1,26 +1,18 @@
 package com.example.cowinalert
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
+data class MyResult(val result: List<com.example.cowinalert.Result>, val alertNames: List<String>)
 
 class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -29,28 +21,45 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         const val WORK_NAME = "QueryCowinAPI"
     }
 
-    override suspend fun doWork(): Result = coroutineScope{
-         try {
-             val database = AlertDatabase.getInstance(applicationContext)
-             val filters = database.alertDatabaseDao.getAlertList()
+    override suspend fun doWork(): Result = coroutineScope {
+        try {
+            val database = AlertDatabase.getInstance(applicationContext)
+            val filters = database.alertDatabaseDao.getAlertList()
+
             if (isCorrectTime() && filters.isNotEmpty()) {
-                val date = getDate()
-                var  results: List<com.example.cowinalert.Result> = listOf()
-                val centers = CowinAPI.retrofitService.getCowinData("121001", date).execute().body()
-                if (centers != null){
-                    results = matchFilter(filters, centers.centers)
+                val today = getDate()
+                val uniqueAlerts = database.alertDatabaseDao.getUniqueAlertList()
+                val pincodes = uniqueAlerts.map {
+                    it.pinCode.toString()
                 }
+                var results: List<com.example.cowinalert.Result> = ArrayList()
+                var resultAlerts: List<String> = ArrayList()
+                for (pincode in pincodes) {
+                    val centers =
+                        CowinAPI.retrofitService.getCowinData(pincode, today).execute().body()
+                    if (centers != null) {
+                        val test = matchFilter(filters, centers.centers)
+                        if (test.result.isNotEmpty()) {
+                            results = results + test.result
+                        }
+                        if (test.alertNames.isNotEmpty()) {
+                            resultAlerts = resultAlerts + test.alertNames
+                        }
+                    }
+                }
+
                 if (results.isNotEmpty()) {
                     for (result in results) {
                         database.alertDatabaseDao.insertResult(result)
                     }
-                    sendNotification()
+                    val msg = "Triggered: ${resultAlerts.joinToString(" ,")}"
+                    sendNotification(msg)
                 }
             }
-             Result.retry()
+            Result.retry()
         } catch (e: Exception) {
             println("failed with exception ${e.message}")
-             Result.retry()
+            Result.retry()
         }
 
     }
@@ -59,8 +68,9 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     private fun matchFilter(
         filters: List<Alert>,
         centers: List<Center>
-    ): List<com.example.cowinalert.Result> {
+    ): MyResult {
         var results: List<com.example.cowinalert.Result> = ArrayList()
+        var triggerdAlertNames: List<String> = ArrayList()
         for (center in centers) {
             val sessions = center.sessions
             for (session in sessions) {
@@ -81,42 +91,41 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                 dose2Capacity = session.availableCapacityDose2
                             )
                             results = results + listOf<com.example.cowinalert.Result>(result)
+                            triggerdAlertNames = triggerdAlertNames + listOf(filter.name)
                         }
                     }
                 }
             }
         }
-        return results
+        return MyResult(results, triggerdAlertNames)
     }
 
-    private fun isCorrectTime():Boolean{
+    private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return  now.isAfter(LocalTime.of(8, 0, 0 )) && now.isBefore(LocalTime.of(16, 0, 0 ))
+        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(16, 0, 0))
     }
 
-    private fun getDate(): String{
+    private fun getDate(): String {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         return current.format(formatter)
     }
 
 
-    private fun sendNotification(){
+    private fun sendNotification(content: String) {
         val intent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
         val notificationManager = NotificationManagerCompat.from(applicationContext)
         val notificationBuilder = NotificationCompat.Builder(applicationContext, "CowinChannel")
             .setSmallIcon(R.drawable.icon)
             .setContentTitle("Cowin Alert")
-            .setContentText("Dummy description")
+            .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
         notificationManager.notify(1001, notificationBuilder.build())
-
     }
-
 }
 
 

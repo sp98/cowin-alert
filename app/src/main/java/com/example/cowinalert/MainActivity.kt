@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         alerts = alerts,
                         results = results,
                         maxAllowedPins = alertViewModel.maxPincodesAllowed,
-                        pincodesUsed= pincodesUsed,
+                        pincodesUsed = pincodesUsed,
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,
