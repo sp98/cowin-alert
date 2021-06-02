@@ -11,7 +11,6 @@ import kotlinx.coroutines.*
 class AlertViewModel(
     val database: AlertDatabaseDao
 ) : ViewModel() {
-
     lateinit var alerts: LiveData<List<Alert>>
     lateinit var result: LiveData<Map<Long, List<Result>>>
     lateinit var pincodesUsed: LiveData<List<String>>
@@ -24,8 +23,6 @@ class AlertViewModel(
     var selectedAlerts: List<Long> by mutableStateOf(listOf())
         private set
 
-    var expandedAlert: Long by mutableStateOf(-1)
-        private set
 
     init {
         initialize()
@@ -45,6 +42,38 @@ class AlertViewModel(
             }
         } else {
             selectedAlerts + listOf(id)
+        }
+    }
+
+    fun clearSelectedAlerts(){
+        selectedAlerts = listOf()
+    }
+
+     fun disableSelectedAlerts(idList: List<Long>){
+        uiscope.launch {
+            disableAlerts(idList)
+        }
+    }
+
+    private suspend fun disableAlerts(idList: List<Long>) {
+        withContext(Dispatchers.IO){
+           for (id in idList){
+               database.disableAlert(id)
+           }
+        }
+    }
+
+    fun enableSelectedAlerts(idList: List<Long>){
+        uiscope.launch {
+            enableAlerts(idList)
+        }
+    }
+
+    private suspend fun enableAlerts(idList: List<Long>) {
+        withContext(Dispatchers.IO){
+            for (id in idList){
+                database.enableAlert(id)
+            }
         }
     }
 

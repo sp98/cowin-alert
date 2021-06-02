@@ -75,6 +75,9 @@ data class Result(
     val dose2Capacity: Int,
 
     @ColumnInfo(name = "triggered_on")
-    val triggeredOn: String = ""
+    val triggeredOn: String = "",
+
+    @ColumnInfo(name = "available_on")
+    val availableOn: String = ""
 
 )

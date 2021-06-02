@@ -16,14 +16,23 @@ interface AlertDatabaseDao {
     @Query("SELECT * FROM cowin_alert_table GROUP BY pincode")
     fun getUniqueAlerts(): LiveData<List<Alert>>
 
-    @Query("SELECT * FROM cowin_alert_table GROUP BY pincode")
+    @Query("SELECT * FROM cowin_alert_table WHERE status = 'enabled' GROUP BY pincode")
     fun getUniqueAlertList(): List<Alert>
 
     @Query("SELECT * FROM cowin_alert_table ORDER BY  alertID DESC")
     fun getAlertList(): List<Alert>
 
+    @Query("SELECT * FROM cowin_alert_table WHERE status = 'enabled' ORDER BY alertID DESC")
+    fun getEnabledAlertList(): List<Alert>
+
     @Query("DELETE FROM cowin_alert_table WHERE alertID = :key")
     fun deleteAlert(key: Long)
+
+    @Query("UPDATE cowin_alert_table SET status = 'disabled' WHERE alertID = :key")
+    fun disableAlert(key: Long)
+
+    @Query("UPDATE cowin_alert_table SET status = 'enabled' WHERE alertID = :key")
+    fun enableAlert(key: Long)
 
     @Insert()
     fun insertResult(result: Result)

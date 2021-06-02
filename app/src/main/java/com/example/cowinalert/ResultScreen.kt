@@ -1,5 +1,6 @@
 package com.example.cowinalert
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +59,7 @@ fun ResultScreen(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .fillMaxWidth(),
+                            border = BorderStroke(1.dp, Color.LightGray),
                             shape = MaterialTheme.shapes.medium,
                         ) {
                             Column(
@@ -71,6 +74,11 @@ fun ResultScreen(
                                     text = "Hospital: ${result.hospitalName}",
                                     style = MaterialTheme.typography.body1
                                 )
+                                Text(
+                                    text = "Available on: ${result.availableOn}",
+                                    style = MaterialTheme.typography.body1
+                                )
+
                                 CowinAlertDivider()
                                 Text(
                                     text = "Address: ${result.address}",

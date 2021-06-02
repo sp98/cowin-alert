@@ -24,7 +24,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result = coroutineScope {
         try {
             val database = AlertDatabase.getInstance(applicationContext)
-            val filters = database.alertDatabaseDao.getAlertList()
+            val filters = database.alertDatabaseDao.getEnabledAlertList()
 
             if (isCorrectTime() && filters.isNotEmpty()) {
                 val today = getFormattedTime("dd-MM-yyyy")
@@ -77,22 +77,27 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                 if (session.availableCapacity > 0) {
                     for (filter in filters) {
                         if (filter.pinCode == center.pincode) {
-                            // TODO add more matchers.
-                            val result = Result(
-                                alertID = filter.alertID,
-                                hospitalName = center.name,
-                                address = center.address,
-                                stateName = center.stateName,
-                                districtName = center.districtName,
-                                blockName = center.blockName,
-                                feeType = center.feeType,
-                                availableCapacity = session.availableCapacity,
-                                dose1Capacity = session.availableCapacityDose1,
-                                dose2Capacity = session.availableCapacityDose2,
-                                triggeredOn = getFormattedTime("dd-MM-yyyy HH:mm")
-                            )
-                            results = results + listOf<com.example.cowinalert.Result>(result)
-                            triggeredAlertNames = triggeredAlertNames + listOf(filter.name)
+                            val isValidAgeGroup = validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
+                            val isValidVaccine = validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
+                            if (isValidAgeGroup && isValidVaccine){
+                                val result = Result(
+                                    alertID = filter.alertID,
+                                    hospitalName = center.name,
+                                    address = center.address,
+                                    stateName = center.stateName,
+                                    districtName = center.districtName,
+                                    blockName = center.blockName,
+                                    feeType = center.feeType,
+                                    availableCapacity = session.availableCapacity,
+                                    dose1Capacity = session.availableCapacityDose1,
+                                    dose2Capacity = session.availableCapacityDose2,
+                                    triggeredOn = getFormattedTime("dd-MM-yyyy HH:mm"),
+                                    availableOn = session.date
+                                )
+                                results += listOf(result)
+                                triggeredAlertNames += listOf(filter.name)
+                            }
+
                         }
                     }
                 }
@@ -101,9 +106,39 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         return MyResult(results, triggeredAlertNames)
     }
 
+
+    private fun validAgeLimit(isBelow45: Boolean, isAbove45: Boolean, actual: Int): Boolean {
+        var isValid = false
+
+        if (isBelow45 && actual == 18) {
+            isValid = true
+        }
+
+        if (isAbove45 && actual == 45) {
+            isValid = true
+        }
+
+        return isValid
+
+    }
+
+    private fun validVaccine(isCovishield: Boolean, isCovaxin: Boolean, actual: String): Boolean {
+        var isValid = false
+
+        if (isCovishield && actual == "COVISHIELD") {
+            isValid = true
+        }
+
+        if (isCovaxin && actual == "COVAXIN") {
+            isValid = true
+        }
+
+        return isValid
+    }
+
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(18, 0, 0))
+        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(21, 0, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {

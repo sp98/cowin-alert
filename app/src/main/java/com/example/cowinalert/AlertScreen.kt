@@ -10,12 +10,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -35,11 +38,17 @@ fun AlertScreen(
     pincodesUsed: List<String>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
+    onClearAllSelections: () -> Unit,
+    onDisableAlerts: (List<Long>) -> Unit,
+    onEnableAlerts: (List<Long>) -> Unit,
     onDeleteAlerts: () -> Unit,
     navController: NavController
 ) {
 
     val context = LocalContext.current
+    val isSelected = selectedAlerts.isNotEmpty()
+    val title = if (isSelected) "(${selectedAlerts.size}) Selected" else "Cowin Alert"
+    var expanded by remember { mutableStateOf(false) }
     CowinAlertTheme() {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
@@ -47,41 +56,80 @@ fun AlertScreen(
                     InsetAwareTopAppBar(
                         title = {
                             Text(
-                                text = "Cowin Alert",
+                                text = title,
                                 textAlign = TextAlign.Center
                             )
                         },
+                        actions = {
+                            if (isSelected) {
+                                IconButton(
+                                    onClick = onClearAllSelections,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_back_arrow),
+                                        contentDescription = "back"
+                                    )
+                                }
+                                IconButton(
+                                    onClick = onDeleteAlerts,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_delete),
+                                        contentDescription = "delete"
+                                    )
+                                }
+
+                                Box() {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            Icons.Filled.MoreVert,
+                                            contentDescription = "overflow menu"
+                                        )
+                                    }
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false })
+                                    {
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                onDisableAlerts(selectedAlerts)
+                                                expanded = false
+
+                                            },
+                                        ) {
+                                            Text("disable")
+                                        }
+                                        DropdownMenuItem(
+                                            onClick = {
+                                                onEnableAlerts(selectedAlerts)
+                                                expanded = false
+                                            }) {
+                                            Text("enable")
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
                     )
                 },
                 bottomBar = {
-                    if (selectedAlerts.isNotEmpty()) {
-                        Button(
-                            onClick = onDeleteAlerts,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colors.error)
+                    Button(
+                        enabled = selectedAlerts.isEmpty(),
+                        onClick = {
+                            if (pincodesUsed.size == maxAllowedPins) {
+                                val msg = "Maximum $maxAllowedPins pincodes allowed"
+                                showToastMsg(context, msg)
+                            } else {
+                                navController.navigate("CreateAlert")
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
 
-                        ) {
-                            Text("DELETE")
-                        }
-                    } else {
-                        Button(
-                            onClick = {
-                                if (pincodesUsed.size == maxAllowedPins) {
-                                    val msg = "reached max pincode limit of $maxAllowedPins"
-                                    showToastMsg(context, msg)
-                                } else {
-                                    navController.navigate("CreateAlert")
-                                }
-                            },
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
-
-                        ) {
-                            Text("CREATE")
-                        }
+                    ) {
+                        Text("CREATE")
                     }
                 }
 
@@ -100,6 +148,19 @@ fun AlertScreen(
     }
 }
 
+
+@Composable
+fun MyMenu(
+    onEnable: () -> Unit,
+    onDisable: () -> Unit,
+    onClearAllSelections: () -> Unit,
+
+    ) {
+    var expanded by remember { mutableStateOf(false) }
+
+
+
+}
 
 @Composable
 fun AlertList(
@@ -172,13 +233,25 @@ fun AlertList(
 
                     }
 
+
                     Column(
                         modifier = Modifier
                             .weight(3f)
                             .padding(10.dp)
                         //verticalArrangement = Arrangement.Center,
                     ) {
-                        Text(text = alert.name, style = MaterialTheme.typography.h4)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ){
+                            Text(text = alert.name, style = MaterialTheme.typography.h4)
+                            if (alert.status == "disabled") {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_disable),
+                                    contentDescription = "disabled"
+                                )
+                            }
+                        }
                         CowinAlertDivider()
                         Text(
                             text = "Pincode: ${alert.pinCode}",
@@ -245,7 +318,7 @@ fun showToastMsg(context: Context, msg: String) {
 fun getVaccines(alert: Alert): String {
     var vaccines: String = ""
     if (alert.isCovishield && alert.isCovaxin) {
-        vaccines = "all"
+        vaccines = "any"
     } else {
         if (alert.isCovaxin) {
             vaccines += "covaxin"
@@ -261,7 +334,7 @@ fun getVaccines(alert: Alert): String {
 fun getAgeGroups(alert: Alert): String {
     var ageGroup: String = ""
     if (alert.above45 && alert.below45) {
-        ageGroup = "all"
+        ageGroup = "any"
     } else {
         if (alert.above45) {
             ageGroup += ">45"

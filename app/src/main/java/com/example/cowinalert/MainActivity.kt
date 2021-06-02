@@ -13,7 +13,6 @@ import androidx.navigation.compose.*
 class MainActivity : ComponentActivity() {
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i("hello", "testing22")
         super.onCreate(savedInstanceState)
         val application = requireNotNull(this).application
         val dataSource = AlertDatabase.getInstance(application).alertDatabaseDao
@@ -41,6 +40,9 @@ class MainActivity : ComponentActivity() {
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,
+                        onClearAllSelections = alertViewModel::clearSelectedAlerts,
+                        onDisableAlerts = alertViewModel::disableSelectedAlerts,
+                        onEnableAlerts = alertViewModel::enableSelectedAlerts,
                         navController = navController
                     )
                 }
