@@ -1,11 +1,10 @@
 package com.example.cowinalert
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +22,9 @@ fun CreateAlertScreen(
 ) {
     val context = LocalContext.current
     val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
+    val scrollState = rememberScrollState()
+    //LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
+
     CowinAlertTheme() {
         Surface() {
             Scaffold(
@@ -67,63 +69,101 @@ fun CreateAlertScreen(
                     )
                 }
             ) {
+                Box(modifier = Modifier.padding(it)) {
 
-                Column(Modifier.padding(24.dp)) {
+                    Column(
+                        Modifier
+                            .padding(20.dp)
+                            .verticalScroll(scrollState)
+                    ) {
 
-                    // alert name text field
-                    AlertTextField(
-                        value = viewModel.name,
-                        onValueChange = viewModel::onNameChange,
-                        placeholder = "Alert Name"
-                    )
+                        // alert name text field
+                        AlertTextField(
+                            value = viewModel.name,
+                            onValueChange = viewModel::onNameChange,
+                            placeholder = "Alert Name"
+                        )
 
-                    Spacer(modifier = Modifier.padding(4.dp))
+                        Spacer(modifier = Modifier.padding(4.dp))
 
-                    // pin name text field
-                    AlertTextField(
-                        value = viewModel.pin,
-                        onValueChange = viewModel::onPinChange,
-                        placeholder = "Pincode"
-                    )
+                        // pin name text field
+                        AlertTextField(
+                            value = viewModel.pin,
+                            onValueChange = viewModel::onPinChange,
+                            placeholder = "Pincode"
+                        )
 
-                    Spacer(modifier = Modifier.padding(4.dp))
+                        Spacer(modifier = Modifier.padding(4.dp))
 
-                    Text("Select Vaccine:", style = MaterialTheme.typography.caption)
+                        Text("Select Vaccine:", style = MaterialTheme.typography.caption)
 
-                    // Covishield checkbox
-                    CheckboxComponent(
-                        checked = viewModel.isCovishield,
-                        onCheckedChange = viewModel::onCovishieldCheck,
-                        checkBoxText = "Covishield"
-                    )
+                        // Covishield checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isCovishield,
+                            onCheckedChange = viewModel::onCovishieldCheck,
+                            checkBoxText = "Covishield"
+                        )
 
-                    // Covaxin Checkbox
-                    CheckboxComponent(
-                        checked = viewModel.isCovaxin,
-                        onCheckedChange = viewModel::onCovaxinCheck,
-                        checkBoxText = "Covaxin"
-                    )
+                        // Covaxin Checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isCovaxin,
+                            onCheckedChange = viewModel::onCovaxinCheck,
+                            checkBoxText = "Covaxin"
+                        )
 
-                    Spacer(modifier = Modifier.padding(4.dp))
+                        Spacer(modifier = Modifier.padding(4.dp))
 
-                    Text(text = "Select age group:", style = MaterialTheme.typography.caption)
+                        Text(text = "Select age group:", style = MaterialTheme.typography.caption)
 
-                    // above 45 checkbox
-                    CheckboxComponent(
-                        checked = viewModel.isAbove45,
-                        onCheckedChange = viewModel::onAbove45check,
-                        checkBoxText = "Above 45"
-                    )
+                        // above 45 checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isAbove45,
+                            onCheckedChange = viewModel::onAbove45check,
+                            checkBoxText = "Above 45"
+                        )
 
-                    // below 45 checkbox
-                    CheckboxComponent(
-                        checked = viewModel.isBelow45,
-                        onCheckedChange = viewModel::onBelow45Check,
-                        checkBoxText = "Below 45"
-                    )
+                        // below 45 checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isBelow45,
+                            onCheckedChange = viewModel::onBelow45Check,
+                            checkBoxText = "Below 45"
+                        )
+
+                        Spacer(modifier = Modifier.padding(4.dp))
+
+                        Text(text = "Select dose:", style = MaterialTheme.typography.caption)
+
+                        CheckboxComponent(
+                            checked = viewModel.isDose1,
+                            onCheckedChange = viewModel::onDose1Check,
+                            checkBoxText = "Dose 1"
+                        )
+
+                        CheckboxComponent(
+                            checked = viewModel.isDose2,
+                            onCheckedChange = viewModel::onDose2Check,
+                            checkBoxText = "Dose 2"
+                        )
+
+                        Spacer(modifier = Modifier.padding(4.dp))
+
+                        Text(text = "Select fee type:", style = MaterialTheme.typography.caption)
+
+                        CheckboxComponent(
+                            checked = viewModel.isFree,
+                            onCheckedChange = viewModel::onFreeCheck,
+                            checkBoxText = "Free"
+                        )
+
+                        CheckboxComponent(
+                            checked = viewModel.isPaid,
+                            onCheckedChange = viewModel::onPaidCheck,
+                            checkBoxText = "Paid"
+                        )
+
+                    }
 
                 }
-
             }
 
         }

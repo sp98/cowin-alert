@@ -79,7 +79,9 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                         if (filter.pinCode == center.pincode) {
                             val isValidAgeGroup = validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
                             val isValidVaccine = validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
-                            if (isValidAgeGroup && isValidVaccine){
+                            val isValidDose = validDose(filter.dose1, filter.dose2, session.availableCapacityDose1, session.availableCapacityDose2)
+                            val isValidFeeType = validFeeType(filter.free, filter.paid, center.feeType)
+                            if (isValidAgeGroup && isValidVaccine && isValidDose && isValidFeeType){
                                 val result = Result(
                                     alertID = filter.alertID,
                                     hospitalName = center.name,
@@ -124,6 +126,23 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     }
 
+    private fun validDose(isDose1: Boolean,
+                          isDose2: Boolean,
+                          dose1Count: Int,
+                          dose2Count: Int): Boolean {
+        var isValid = false
+
+        if (isDose1 && dose1Count > 0) {
+            isValid = true
+        }
+
+        if (isDose2 && dose2Count > 0) {
+            isValid = true
+        }
+
+        return isValid
+    }
+
     private fun validVaccine(isCovishield: Boolean, isCovaxin: Boolean, actual: String): Boolean {
         var isValid = false
 
@@ -138,9 +157,23 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         return isValid
     }
 
+    private fun validFeeType(isFree: Boolean, isPaid: Boolean, actual: String): Boolean {
+        var isValid = false
+
+        if (isFree && actual == "Free") {
+            isValid = true
+        }
+
+        if (isPaid && actual == "Paid") {
+            isValid = true
+        }
+
+        return isValid
+    }
+
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(23, 30, 0))
+        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(18, 0, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {

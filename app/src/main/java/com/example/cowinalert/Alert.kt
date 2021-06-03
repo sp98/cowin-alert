@@ -35,6 +35,12 @@ data class Alert(
     @ColumnInfo(name = "isDose2")
     val dose2: Boolean = false,
 
+    @ColumnInfo(name = "isFree")
+    val free: Boolean = false,
+
+    @ColumnInfo(name = "isPaid")
+    val paid: Boolean = false,
+
     @ColumnInfo(name = "status")
     val status: String = "enabled",
     )

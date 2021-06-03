@@ -35,8 +35,15 @@ class CreateAlertViewModel(
 
     var isBelow45: Boolean by mutableStateOf(false)
 
+    var isDose1: Boolean by mutableStateOf(false)
+
+    var isDose2: Boolean by mutableStateOf(false)
+
+    var isPaid: Boolean by mutableStateOf(false)
+
+    var isFree: Boolean by mutableStateOf(false)
+
     fun onNameChange(newName: String) {
-        Timber.i("name changing")
         name = newName
     }
 
@@ -60,6 +67,22 @@ class CreateAlertViewModel(
         isBelow45 = below45
     }
 
+    fun onDose1Check(dose1: Boolean){
+        isDose1 = dose1
+    }
+
+    fun onDose2Check(dose2: Boolean){
+        isDose2 = dose2
+    }
+
+    fun onFreeCheck(free: Boolean){
+        isFree = free
+    }
+
+    fun onPaidCheck(paid: Boolean){
+        isPaid = paid
+    }
+
     private fun reset() {
         name = ""
         pin = ""
@@ -67,6 +90,10 @@ class CreateAlertViewModel(
         isCovaxin = false
         isAbove45 = false
         isBelow45 = false
+        isDose1 = false
+        isDose2 = false
+        isFree = false
+        isPaid = false
     }
 
     fun onCreate(navController: NavController) {
@@ -78,6 +105,10 @@ class CreateAlertViewModel(
             isCovaxin = isCovaxin,
             above45 = isAbove45,
             below45 = isBelow45,
+            dose1 = isDose1,
+            dose2 = isDose2,
+            free = isFree,
+            paid = isPaid
         )
 
         // save alert to database

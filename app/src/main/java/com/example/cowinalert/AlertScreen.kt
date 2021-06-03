@@ -178,6 +178,8 @@ fun AlertList(
             val totalResults = results?.let { results.size } ?: 0
             val vaccines: String = getVaccines(alert)
             val ageGroup: String = getAgeGroups(alert)
+            val feeType: String = getFeeType(alert)
+            val doseType: String = getDoseType(alert)
             val selectedAlertBackground = if (selectedAlerts.contains(alert.alertID)) {
                 MaterialTheme.colors.primary.copy(alpha = 0.12f)
             } else {
@@ -265,6 +267,14 @@ fun AlertList(
                             text = "Age limit: $ageGroup",
                             style = MaterialTheme.typography.overline
                         )
+                        Text(
+                            text = "Dose: $doseType",
+                            style = MaterialTheme.typography.overline
+                        )
+                        Text(
+                            text = "Fee type: $feeType",
+                            style = MaterialTheme.typography.overline
+                        )
                     }
                 }
 
@@ -329,6 +339,36 @@ fun getVaccines(alert: Alert): String {
     }
     return vaccines
 
+}
+
+fun getFeeType(alert: Alert): String {
+    var feeType: String = ""
+    if (alert.paid && alert.free) {
+        feeType = "any"
+    } else {
+        if (alert.free) {
+            feeType += "free"
+        }
+        if (alert.paid) {
+            feeType = if (feeType == "") feeType + "paid" else "$feeType,paid"
+        }
+    }
+    return feeType
+}
+
+fun getDoseType(alert: Alert): String {
+    var doseType: String = ""
+    if (alert.dose1 && alert.dose2) {
+        doseType = "any"
+    } else {
+        if (alert.dose1) {
+            doseType += "dose1"
+        }
+        if (alert.dose2) {
+            doseType = if (doseType == "") doseType + "dose2" else "$doseType,dose2"
+        }
+    }
+    return doseType
 }
 
 fun getAgeGroups(alert: Alert): String {

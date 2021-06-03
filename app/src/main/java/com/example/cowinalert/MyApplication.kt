@@ -62,7 +62,7 @@ class MyApplication : Application() {
             .addTag("CowinQuery")
             .setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                5,
+                10,
                 TimeUnit.MINUTES
             )
             .build()

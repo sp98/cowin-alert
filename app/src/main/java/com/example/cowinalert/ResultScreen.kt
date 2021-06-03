@@ -35,7 +35,6 @@ fun ResultScreen(
     onSelectResult: (Result) -> Unit
 ) {
     val context = LocalContext.current
-    println("first - $selectedResult")
     CowinAlertTheme() {
         Scaffold(
             topBar = {
@@ -125,6 +124,11 @@ fun ResultScreen(
                                     text = "Address: ${result.address}",
                                     style = MaterialTheme.typography.overline
                                 )
+                                Text(
+                                    text = "Age Group: ${result.ageGroup}",
+                                    style = MaterialTheme.typography.overline
+                                )
+
                                 Text(
                                     text = "Available Capacity: ${result.availableCapacity}",
                                     style = MaterialTheme.typography.overline
