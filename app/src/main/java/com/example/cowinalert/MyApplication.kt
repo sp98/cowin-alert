@@ -62,14 +62,14 @@ class MyApplication : Application() {
             .addTag("CowinQuery")
             .setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                10,
+                2,
                 TimeUnit.MINUTES
             )
             .build()
 
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             QueryWorker.WORK_NAME,
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             oneTimeRequest
         )
     }

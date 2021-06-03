@@ -141,18 +141,6 @@ fun AlertScreen(
 
 
 @Composable
-fun MyMenu(
-    onEnable: () -> Unit,
-    onDisable: () -> Unit,
-    onClearAllSelections: () -> Unit,
-
-    ) {
-    var expanded by remember { mutableStateOf(false) }
-
-
-}
-
-@Composable
 fun AlertList(
     alerts: List<Alert>,
     resultMap: Map<Long, List<Result>>,
@@ -236,7 +224,7 @@ fun AlertList(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = alert.name, style = MaterialTheme.typography.h4)
+                            Text(text = alert.name, style = MaterialTheme.typography.h5)
                             if (alert.status == "disabled") {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_disable),

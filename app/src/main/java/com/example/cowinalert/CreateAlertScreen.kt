@@ -45,9 +45,12 @@ fun CreateAlertScreen(
                             onClick = {
                                 if (!pincodeRegex.matches(viewModel.pin)) {
                                     showToastMsg(context, "Invalid pincode ${viewModel.pin}")
-                                } else if (pincodesUsed.size == viewModel.maxPincodesAllowed) {
+                                } else if (pincodesUsed.size == viewModel.maxPincodesAllowed
+                                    && !pincodesUsed.contains(viewModel.pin)
+                                ) {
                                     val msg =
-                                        "Maximum ${viewModel.maxPincodesAllowed} pincodes allowed"
+                                        "Maximum ${viewModel.maxPincodesAllowed} pincodes allowed. " +
+                                                "Pincodes in use - ${pincodesUsed.joinToString(" and ")} "
                                     showToastMsg(context, msg)
                                 } else {
                                     viewModel.onCreate(navController)
