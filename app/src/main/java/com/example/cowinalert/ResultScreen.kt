@@ -3,7 +3,6 @@ package com.example.cowinalert
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -47,8 +46,8 @@ fun ResultScreen(
                     },
                     elevation = 12.dp,
                     actions = {
-                        if(selectedResult != Result()){
-                            IconButton(onClick = {shareData(context, selectedResult)}) {
+                        if (selectedResult != Result()) {
+                            IconButton(onClick = { shareData(context, selectedResult) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_share),
                                     contentDescription = "share"
@@ -77,7 +76,7 @@ fun ResultScreen(
                 LazyColumn() {
 
                     items(items = results) { result ->
-                        val selectedAlertBackground = if(selectedResult == result) {
+                        val selectedAlertBackground = if (selectedResult == result) {
                             MaterialTheme.colors.primary.copy(alpha = 0.12f)
                         } else {
                             MaterialTheme.colors.background
@@ -86,12 +85,12 @@ fun ResultScreen(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .fillMaxWidth()
-                                . pointerInput(selectedResult) {
+                                .pointerInput(selectedResult) {
                                     detectTapGestures(
                                         onTap = {
-                                            if(selectedResult == result){
+                                            if (selectedResult == result) {
                                                 onSelectResult(Result())
-                                            }else{
+                                            } else {
                                                 onSelectResult(result)
                                             }
 
@@ -156,7 +155,6 @@ fun ResultScreen(
 
     }
 }
-
 
 
 @Preview(name = "Result Detail Screen")
@@ -276,19 +274,21 @@ fun PreviewResultDetails() {
 
 private fun getShareIntent(context: Context, result: Result): Intent {
     return ShareCompat.IntentBuilder.from(context as Activity)
-        .setText("Vaccination Available:\n" +
-                "Hospital Name:  ${result.hospitalName}\n" +
-                "Address: ${result.address}\n"+
-                "Age Group:  ${result.ageGroup}+\n" +
-                "Date:  ${result.availableOn}\n" +
-                "Total Doses:  ${result.availableCapacity}\n" +
-                "Dose 1:  ${result.dose1Capacity}\n" +
-                "Dose 2:  ${result.dose2Capacity}\n")
+        .setText(
+            "Vaccination Available:\n" +
+                    "Hospital Name:  ${result.hospitalName}\n" +
+                    "Address: ${result.address}\n" +
+                    "Age Group:  ${result.ageGroup}+\n" +
+                    "Date:  ${result.availableOn}\n" +
+                    "Total Doses:  ${result.availableCapacity}\n" +
+                    "Dose 1:  ${result.dose1Capacity}\n" +
+                    "Dose 2:  ${result.dose2Capacity}\n"
+        )
         .setType("text/plain")
         .intent
 
 }
 
-private fun shareData(context: Context, result: Result){
+private fun shareData(context: Context, result: Result) {
     startActivity(context, getShareIntent(context, result), null)
 }

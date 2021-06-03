@@ -43,7 +43,7 @@ data class Alert(
 
     @ColumnInfo(name = "status")
     val status: String = "enabled",
-    )
+)
 
 
 @Entity(tableName = "cowin_result_table")
@@ -89,4 +89,4 @@ data class Result(
     @ColumnInfo(name = "age_group")
     val ageGroup: Int = -1,
 
-)
+    )

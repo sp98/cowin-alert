@@ -13,9 +13,6 @@ class AlertViewModel(
 ) : ViewModel() {
     lateinit var alerts: LiveData<List<Alert>>
     lateinit var result: LiveData<Map<Long, List<Result>>>
-    lateinit var pincodesUsed: LiveData<List<String>>
-
-    val maxPincodesAllowed = 2
 
     private val viewModelJob = Job()
     private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -45,33 +42,33 @@ class AlertViewModel(
         }
     }
 
-    fun clearSelectedAlerts(){
+    fun clearSelectedAlerts() {
         selectedAlerts = listOf()
     }
 
-     fun disableSelectedAlerts(idList: List<Long>){
+    fun disableSelectedAlerts(idList: List<Long>) {
         uiscope.launch {
             disableAlerts(idList)
         }
     }
 
     private suspend fun disableAlerts(idList: List<Long>) {
-        withContext(Dispatchers.IO){
-           for (id in idList){
-               database.disableAlert(id)
-           }
+        withContext(Dispatchers.IO) {
+            for (id in idList) {
+                database.disableAlert(id)
+            }
         }
     }
 
-    fun enableSelectedAlerts(idList: List<Long>){
+    fun enableSelectedAlerts(idList: List<Long>) {
         uiscope.launch {
             enableAlerts(idList)
         }
     }
 
     private suspend fun enableAlerts(idList: List<Long>) {
-        withContext(Dispatchers.IO){
-            for (id in idList){
+        withContext(Dispatchers.IO) {
+            for (id in idList) {
                 database.enableAlert(id)
             }
         }
@@ -81,18 +78,11 @@ class AlertViewModel(
     private suspend fun initializeAlerts() {
         withContext(Dispatchers.IO) {
             alerts = database.getAllAlerts()
-            val pincodes = database.getUniqueAlerts()
             val resultList = database.getAllResults()
             val resultMap = Transformations.map(resultList) { it ->
                 it.groupBy({ it.alertID }, { it })
             }
-            val pins = Transformations.map(pincodes) { it ->
-                it.map {
-                    it.pinCode.toString()
-                }
-            }
             result = resultMap
-            pincodesUsed = pins
         }
     }
 

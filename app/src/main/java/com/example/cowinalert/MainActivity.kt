@@ -1,7 +1,6 @@
 package com.example.cowinalert
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -35,12 +34,9 @@ class MainActivity : ComponentActivity() {
                 composable("home") {
                     val alerts = alertViewModel.alerts.observeAsState(listOf()).value
                     val results = alertViewModel.result.observeAsState(mapOf()).value
-                    val pincodesUsed = alertViewModel.pincodesUsed.observeAsState(listOf()).value
                     AlertScreen(
                         alerts = alerts,
                         results = results,
-                        maxAllowedPins = alertViewModel.maxPincodesAllowed,
-                        pincodesUsed = pincodesUsed,
                         selectedAlerts = alertViewModel.selectedAlerts,
                         onAlertSelect = alertViewModel::updateSelectedAlerts,
                         onDeleteAlerts = alertViewModel::deleteAlerts,
@@ -51,8 +47,11 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("createAlert") {
+                    val pincodesUsed =
+                        createAlertViewModel.pincodesUsed.observeAsState(listOf()).value
                     CreateAlertScreen(
                         viewModel = createAlertViewModel,
+                        pincodesUsed = pincodesUsed,
                         navController = navController
                     )
                 }
@@ -67,13 +66,13 @@ class MainActivity : ComponentActivity() {
                     val alertName = it.arguments?.getString("alertName")
                     val alertID = it.arguments?.getLong("alertID")
                     val results = alertViewModel.result.value?.get(alertID) ?: listOf<Result>()
-                    var selectedResult  by remember { mutableStateOf(Result()) }
+                    var selectedResult by remember { mutableStateOf(Result()) }
                     ResultScreen(
                         alertName = alertName,
                         results = results,
                         onCancel = { navController.navigate("home") },
                         selectedResult = selectedResult,
-                        onSelectResult = {  selectedResult = it }
+                        onSelectResult = { selectedResult = it }
 
                     )
                 }

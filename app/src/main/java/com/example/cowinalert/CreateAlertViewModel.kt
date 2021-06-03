@@ -3,17 +3,19 @@ package com.example.cowinalert
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class CreateAlertViewModel(
     private val database: AlertDatabaseDao
 ) : ViewModel() {
     // ViewModel Job for coroutines
     private var viewModelJob = Job()
+    private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     override fun onCleared() {
         super.onCleared()
@@ -21,7 +23,32 @@ class CreateAlertViewModel(
         viewModelJob.cancel()
     }
 
-    private val uiscope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    lateinit var pincodesUsed: LiveData<List<String>>
+    val maxPincodesAllowed = 2
+
+    init {
+        initialize()
+    }
+
+    private fun initialize() {
+        uiscope.launch {
+            getUsedPins()
+        }
+    }
+
+    private suspend fun getUsedPins() {
+        withContext(Dispatchers.IO) {
+            val pincodes = database.getUniqueAlerts()
+            val pins = Transformations.map(pincodes) { it ->
+                it.map {
+                    it.pinCode.toString()
+                }
+            }
+            pincodesUsed = pins
+        }
+    }
+
 
     var name: String by mutableStateOf("")
 
@@ -67,19 +94,19 @@ class CreateAlertViewModel(
         isBelow45 = below45
     }
 
-    fun onDose1Check(dose1: Boolean){
+    fun onDose1Check(dose1: Boolean) {
         isDose1 = dose1
     }
 
-    fun onDose2Check(dose2: Boolean){
+    fun onDose2Check(dose2: Boolean) {
         isDose2 = dose2
     }
 
-    fun onFreeCheck(free: Boolean){
+    fun onFreeCheck(free: Boolean) {
         isFree = free
     }
 
-    fun onPaidCheck(paid: Boolean){
+    fun onPaidCheck(paid: Boolean) {
         isPaid = paid
     }
 
@@ -119,6 +146,7 @@ class CreateAlertViewModel(
 
         navController.navigate("Home")
     }
+
 
     private fun onInsert(alert: Alert) {
         uiscope.launch {

@@ -77,11 +77,19 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                 if (session.availableCapacity > 0) {
                     for (filter in filters) {
                         if (filter.pinCode == center.pincode) {
-                            val isValidAgeGroup = validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
-                            val isValidVaccine = validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
-                            val isValidDose = validDose(filter.dose1, filter.dose2, session.availableCapacityDose1, session.availableCapacityDose2)
-                            val isValidFeeType = validFeeType(filter.free, filter.paid, center.feeType)
-                            if (isValidAgeGroup && isValidVaccine && isValidDose && isValidFeeType){
+                            val isValidAgeGroup =
+                                validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
+                            val isValidVaccine =
+                                validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
+                            val isValidDose = validDose(
+                                filter.dose1,
+                                filter.dose2,
+                                session.availableCapacityDose1,
+                                session.availableCapacityDose2
+                            )
+                            val isValidFeeType =
+                                validFeeType(filter.free, filter.paid, center.feeType)
+                            if (isValidAgeGroup && isValidVaccine && isValidDose && isValidFeeType) {
                                 val result = Result(
                                     alertID = filter.alertID,
                                     hospitalName = center.name,
@@ -98,7 +106,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                     ageGroup = session.minAgeLimit
                                 )
                                 results += listOf(result)
-                                if (!triggeredAlertNames.contains(filter.name)){
+                                if (!triggeredAlertNames.contains(filter.name)) {
                                     triggeredAlertNames += listOf(filter.name)
                                 }
                             }
@@ -126,10 +134,12 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     }
 
-    private fun validDose(isDose1: Boolean,
-                          isDose2: Boolean,
-                          dose1Count: Int,
-                          dose2Count: Int): Boolean {
+    private fun validDose(
+        isDose1: Boolean,
+        isDose2: Boolean,
+        dose1Count: Int,
+        dose2Count: Int
+    ): Boolean {
         var isValid = false
 
         if (isDose1 && dose1Count > 0) {

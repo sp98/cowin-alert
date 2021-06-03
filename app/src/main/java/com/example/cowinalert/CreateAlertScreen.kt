@@ -4,7 +4,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,12 +17,12 @@ import com.example.cowinalert.ui.theme.CowinAlertTheme
 @Composable
 fun CreateAlertScreen(
     viewModel: CreateAlertViewModel,
-    navController: NavController
+    navController: NavController,
+    pincodesUsed: List<String>
 ) {
     val context = LocalContext.current
     val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
     val scrollState = rememberScrollState()
-    //LaunchedEffect(Unit) { scrollState.animateScrollTo(10000) }
 
     CowinAlertTheme() {
         Surface() {
@@ -46,6 +45,10 @@ fun CreateAlertScreen(
                             onClick = {
                                 if (!pincodeRegex.matches(viewModel.pin)) {
                                     showToastMsg(context, "Invalid pincode ${viewModel.pin}")
+                                } else if (pincodesUsed.size == viewModel.maxPincodesAllowed) {
+                                    val msg =
+                                        "Maximum ${viewModel.maxPincodesAllowed} pincodes allowed"
+                                    showToastMsg(context, msg)
                                 } else {
                                     viewModel.onCreate(navController)
                                 }

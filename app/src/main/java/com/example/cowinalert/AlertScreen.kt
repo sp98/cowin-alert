@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +33,6 @@ import com.google.accompanist.insets.statusBarsPadding
 fun AlertScreen(
     alerts: List<Alert>,
     results: Map<Long, List<Result>>,
-    maxAllowedPins: Int,
-    pincodesUsed: List<String>,
     selectedAlerts: List<Long>,
     onAlertSelect: (Long) -> Unit,
     onClearAllSelections: () -> Unit,
@@ -45,7 +42,6 @@ fun AlertScreen(
     navController: NavController
 ) {
 
-    val context = LocalContext.current
     val isSelected = selectedAlerts.isNotEmpty()
     val title = if (isSelected) "(${selectedAlerts.size}) Selected" else "Cowin Alert"
     var expanded by remember { mutableStateOf(false) }
@@ -117,12 +113,7 @@ fun AlertScreen(
                     Button(
                         enabled = selectedAlerts.isEmpty(),
                         onClick = {
-                            if (pincodesUsed.size == maxAllowedPins) {
-                                val msg = "Maximum $maxAllowedPins pincodes allowed"
-                                showToastMsg(context, msg)
-                            } else {
-                                navController.navigate("CreateAlert")
-                            }
+                            navController.navigate("CreateAlert")
                         },
                         modifier = Modifier
                             .padding(8.dp)
@@ -157,7 +148,6 @@ fun MyMenu(
 
     ) {
     var expanded by remember { mutableStateOf(false) }
-
 
 
 }
@@ -245,7 +235,7 @@ fun AlertList(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
-                        ){
+                        ) {
                             Text(text = alert.name, style = MaterialTheme.typography.h4)
                             if (alert.status == "disabled") {
                                 Icon(
