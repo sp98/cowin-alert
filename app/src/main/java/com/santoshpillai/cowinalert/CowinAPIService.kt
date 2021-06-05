@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

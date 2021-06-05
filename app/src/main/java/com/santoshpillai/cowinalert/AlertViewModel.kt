@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

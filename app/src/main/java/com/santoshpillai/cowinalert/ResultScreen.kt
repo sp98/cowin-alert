@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import android.app.Activity
 import android.content.Context
@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat.startActivity
-import com.example.cowinalert.ui.theme.CowinAlertTheme
+import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 
 @Composable
 fun ResultScreen(

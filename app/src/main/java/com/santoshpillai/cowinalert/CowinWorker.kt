@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import android.app.PendingIntent
 import android.content.Context
@@ -12,7 +12,7 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
-data class MyResult(val result: List<com.example.cowinalert.Result>, val alertNames: List<String>)
+data class MyResult(val result: List<com.santoshpillai.cowinalert.Result>, val alertNames: List<String>)
 
 class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -32,7 +32,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                 val pincodes = uniqueAlerts.map {
                     it.pinCode.toString()
                 }
-                var results: List<com.example.cowinalert.Result> = ArrayList()
+                var results: List<com.santoshpillai.cowinalert.Result> = ArrayList()
                 var resultAlerts: List<String> = ArrayList()
                 for (pincode in pincodes) {
                     val centers =
@@ -70,7 +70,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         filters: List<Alert>,
         centers: List<Center>
     ): MyResult {
-        var results: List<com.example.cowinalert.Result> = ArrayList()
+        var results: List<com.santoshpillai.cowinalert.Result> = ArrayList()
         var triggeredAlertNames: List<String> = ArrayList()
         for (center in centers) {
             val sessions = center.sessions

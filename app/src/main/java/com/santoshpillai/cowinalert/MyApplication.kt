@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import android.app.Application
 import android.app.NotificationChannel
@@ -62,7 +62,7 @@ class MyApplication : Application() {
             .addTag("CowinQuery")
             .setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                2,
+                5,
                 TimeUnit.MINUTES
             )
             .build()

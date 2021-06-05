@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import android.content.Context
 import android.widget.Toast
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.example.cowinalert.ui.theme.CowinAlertTheme
+import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 

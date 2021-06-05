@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

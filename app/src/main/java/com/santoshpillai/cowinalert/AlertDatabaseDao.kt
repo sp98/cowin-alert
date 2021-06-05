@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

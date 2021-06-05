@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.example.cowinalert.ui.theme.CowinAlertTheme
+import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 
 @Composable
 fun CreateAlertScreen(

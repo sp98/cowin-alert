@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

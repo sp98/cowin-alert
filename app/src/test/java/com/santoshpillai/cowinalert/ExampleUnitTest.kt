@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.example.cowinalert.ui.theme
+package com.santoshpillai.cowinalert.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

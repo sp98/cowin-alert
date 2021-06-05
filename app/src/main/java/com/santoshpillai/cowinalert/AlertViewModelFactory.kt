@@ -1,4 +1,4 @@
-package com.example.cowinalert
+package com.santoshpillai.cowinalert
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
