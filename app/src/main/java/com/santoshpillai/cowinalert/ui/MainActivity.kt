@@ -3,13 +3,16 @@ package com.santoshpillai.cowinalert.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.santoshpillai.cowinalert.data.local.AlertDatabase
+import com.santoshpillai.cowinalert.data.model.Result
 import com.santoshpillai.cowinalert.ui.alertscreen.AlertScreen
 import com.santoshpillai.cowinalert.ui.alertscreen.AlertViewModel
 import com.santoshpillai.cowinalert.ui.alertscreen.AlertViewModelFactory
@@ -17,9 +20,6 @@ import com.santoshpillai.cowinalert.ui.createscreen.CreateAlertScreen
 import com.santoshpillai.cowinalert.ui.createscreen.CreateAlertViewModel
 import com.santoshpillai.cowinalert.ui.createscreen.CreateAlertViewModelFactory
 import com.santoshpillai.cowinalert.ui.resultscreen.ResultScreen
-import com.santoshpillai.cowinalert.data.model.Result
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

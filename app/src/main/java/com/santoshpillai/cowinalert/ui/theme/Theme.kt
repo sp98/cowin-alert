@@ -8,24 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Red300,
+    primaryVariant = Red700,
+    onPrimary = Color.Black,
+    secondary = Red300,
+    onSecondary = Color.Black,
+    error = Red200
 )
+
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-)
-
-private val LightColorPalette1 = lightColors(
     primary = Red700,
     primaryVariant = Red900,
     onPrimary = Color.White,
@@ -40,7 +32,7 @@ fun CowinAlertTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
-        LightColorPalette1
+        LightColorPalette
     }
 
     MaterialTheme(

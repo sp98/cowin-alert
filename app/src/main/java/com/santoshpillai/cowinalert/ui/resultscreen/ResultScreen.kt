@@ -25,11 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat.startActivity
-import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
-import com.santoshpillai.cowinalert.data.model.Result
-import com.santoshpillai.cowinalert.ui.alertscreen.CowinAlertDivider
-import com.santoshpillai.cowinalert.ui.alertscreen.InsetAwareTopAppBar
 import com.santoshpillai.cowinalert.R
+import com.santoshpillai.cowinalert.data.model.Result
+import com.santoshpillai.cowinalert.ui.common.CowinDivider
+import com.santoshpillai.cowinalert.ui.common.InsetAwareTopAppBar
+import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 
 @Composable
 fun ResultScreen(
@@ -131,7 +131,7 @@ fun ResultScreen(
                                     style = MaterialTheme.typography.body1
                                 )
 
-                                CowinAlertDivider()
+                                CowinDivider()
                                 Text(
                                     text = "Address: ${result.address}",
                                     style = MaterialTheme.typography.overline
