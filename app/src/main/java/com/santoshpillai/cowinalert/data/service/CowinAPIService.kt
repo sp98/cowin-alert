@@ -1,5 +1,6 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.data.service
 
+import com.santoshpillai.cowinalert.data.model.Centers
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call

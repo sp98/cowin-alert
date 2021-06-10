@@ -7,13 +7,14 @@ import android.content.Context
 import android.os.Build
 import androidx.work.*
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.santoshpillai.cowinalert.workers.QueryWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class MyApplication : Application() {
+class CowinAlertApplication : Application() {
     val channelID = "CowinChannel"
     private val applicationScope = CoroutineScope(Dispatchers.Default)
     override fun onCreate() {
@@ -69,7 +70,7 @@ class MyApplication : Application() {
 
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
             QueryWorker.WORK_NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             oneTimeRequest
         )
     }

@@ -1,7 +1,8 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.ui.createscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.santoshpillai.cowinalert.data.local.AlertDatabaseDao
 
 
 class CreateAlertViewModelFactory(

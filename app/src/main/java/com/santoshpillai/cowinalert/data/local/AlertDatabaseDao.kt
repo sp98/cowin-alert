@@ -1,9 +1,11 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.data.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.santoshpillai.cowinalert.data.model.Alert
+import com.santoshpillai.cowinalert.data.model.Result
 
 @Dao
 interface AlertDatabaseDao {

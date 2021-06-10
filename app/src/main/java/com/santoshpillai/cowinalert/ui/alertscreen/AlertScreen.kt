@@ -1,4 +1,4 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.ui.alertscreen
 
 import android.content.Context
 import android.widget.Toast
@@ -24,9 +24,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import com.santoshpillai.cowinalert.R
+import com.santoshpillai.cowinalert.data.model.Alert
+import com.santoshpillai.cowinalert.data.model.Result
+import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 
 
 @Composable
@@ -242,7 +245,7 @@ fun AlertList(
                             style = MaterialTheme.typography.overline
                         )
                         Text(
-                            text = "Age limit: $ageGroup",
+                            text = "Age Limit: $ageGroup",
                             style = MaterialTheme.typography.overline
                         )
                         Text(
@@ -250,7 +253,7 @@ fun AlertList(
                             style = MaterialTheme.typography.overline
                         )
                         Text(
-                            text = "Fee type: $feeType",
+                            text = "Fee Type: $feeType",
                             style = MaterialTheme.typography.overline
                         )
                     }

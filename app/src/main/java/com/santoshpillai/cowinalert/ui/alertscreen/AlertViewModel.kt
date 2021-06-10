@@ -1,4 +1,4 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.ui.alertscreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.santoshpillai.cowinalert.data.local.AlertDatabaseDao
+import com.santoshpillai.cowinalert.data.model.Alert
+import com.santoshpillai.cowinalert.data.model.Result
 import kotlinx.coroutines.*
 
 class AlertViewModel(
