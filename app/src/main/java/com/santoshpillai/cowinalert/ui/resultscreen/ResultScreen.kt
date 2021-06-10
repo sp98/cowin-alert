@@ -1,4 +1,4 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.ui.resultscreen
 
 import android.app.Activity
 import android.content.Context
@@ -26,6 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
+import com.santoshpillai.cowinalert.data.model.Result
+import com.santoshpillai.cowinalert.ui.alertscreen.CowinAlertDivider
+import com.santoshpillai.cowinalert.ui.alertscreen.InsetAwareTopAppBar
+import com.santoshpillai.cowinalert.R
 
 @Composable
 fun ResultScreen(

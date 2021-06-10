@@ -1,4 +1,4 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.data.model
 
 import com.squareup.moshi.Json
 

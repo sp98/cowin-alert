@@ -1,4 +1,4 @@
-package com.santoshpillai.cowinalert
+package com.santoshpillai.cowinalert.workers
 
 import android.app.PendingIntent
 import android.content.Context
@@ -7,12 +7,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.santoshpillai.cowinalert.R
+import com.santoshpillai.cowinalert.data.local.AlertDatabase
+import com.santoshpillai.cowinalert.data.model.Alert
+import com.santoshpillai.cowinalert.data.model.Center
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
+import com.santoshpillai.cowinalert.data.model.Result as CowinResult
+import com.santoshpillai.cowinalert.data.service.CowinAPI
+import com.santoshpillai.cowinalert.ui.MainActivity
 
-data class MyResult(val result: List<com.santoshpillai.cowinalert.Result>, val alertNames: List<String>)
+data class MyResult(val result: List<CowinResult>, val alertNames: List<String>)
 
 class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -32,7 +39,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                 val pincodes = uniqueAlerts.map {
                     it.pinCode.toString()
                 }
-                var results: List<com.santoshpillai.cowinalert.Result> = ArrayList()
+                var results: List<CowinResult> = ArrayList()
                 var resultAlerts: List<String> = ArrayList()
                 for (pincode in pincodes) {
                     val centers =
@@ -70,7 +77,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         filters: List<Alert>,
         centers: List<Center>
     ): MyResult {
-        var results: List<com.santoshpillai.cowinalert.Result> = ArrayList()
+        var results: List<CowinResult> = ArrayList()
         var triggeredAlertNames: List<String> = ArrayList()
         for (center in centers) {
             val sessions = center.sessions
@@ -91,7 +98,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                             val isValidFeeType =
                                 validFeeType(filter.free, filter.paid, center.feeType)
                             if (isValidAgeGroup && isValidVaccine && isValidDose && isValidFeeType) {
-                                val result = Result(
+                                val result = CowinResult(
                                     alertID = filter.alertID,
                                     hospitalName = center.name,
                                     address = center.address,
