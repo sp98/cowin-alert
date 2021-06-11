@@ -1,7 +1,5 @@
 package com.santoshpillai.cowinalert.ui.alertscreen
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -20,15 +18,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.santoshpillai.cowinalert.R
 import com.santoshpillai.cowinalert.data.model.Alert
 import com.santoshpillai.cowinalert.data.model.Result
+import com.santoshpillai.cowinalert.ui.common.CowinDivider
+import com.santoshpillai.cowinalert.ui.common.InsetAwareTopAppBar
 import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 
 
@@ -47,10 +44,31 @@ fun AlertScreen(
 
     val isSelected = selectedAlerts.isNotEmpty()
     val title = if (isSelected) "(${selectedAlerts.size}) Selected" else "Cowin Alert"
+    val showAddIcon = selectedAlerts.isEmpty()
     var expanded by remember { mutableStateOf(false) }
     CowinAlertTheme() {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
+                floatingActionButtonPosition = FabPosition.End,
+                floatingActionButton = {
+                   if (showAddIcon){
+                       FloatingActionButton(
+                           modifier = Modifier
+                               .padding(5.dp),
+                           shape = CircleShape,
+                           onClick = {
+                               navController.navigate("CreateAlert")
+                           },
+                           backgroundColor = MaterialTheme.colors.primary,
+                           elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                       ) {
+                           Icon(
+                               painter = painterResource(id = R.drawable.ic_add),
+                               contentDescription = "add"
+                           )
+                       }
+                   }
+                },
                 topBar = {
                     InsetAwareTopAppBar(
                         title = {
@@ -111,20 +129,6 @@ fun AlertScreen(
                             }
                         }
                     )
-                },
-                bottomBar = {
-                    Button(
-                        enabled = selectedAlerts.isEmpty(),
-                        onClick = {
-                            navController.navigate("CreateAlert")
-                        },
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth()
-
-                    ) {
-                        Text("CREATE")
-                    }
                 }
 
             ) {
@@ -152,219 +156,125 @@ fun AlertList(
     onSeeResults: (String, Long) -> Unit,
 ) {
     LazyColumn(
-        //contentPadding = PaddingValues(top = 10.dp)
     ) {
         items(items = alerts) { alert ->
             val results = resultMap[alert.alertID]
-            val totalResults = results?.let { results.size } ?: 0
-            val vaccines: String = getVaccines(alert)
-            val ageGroup: String = getAgeGroups(alert)
-            val feeType: String = getFeeType(alert)
-            val doseType: String = getDoseType(alert)
-            val selectedAlertBackground = if (selectedAlerts.contains(alert.alertID)) {
-                MaterialTheme.colors.primary.copy(alpha = 0.12f)
-            } else {
-                MaterialTheme.colors.background
-            }
+            val resultCount = results?.let { results.size } ?: 0
+            AlertDetail(
+                resultCount = resultCount,
+                alert = alert,
+                selectedAlerts = selectedAlerts,
+                onAlertSelect = onAlertSelect,
+                onSeeResults = onSeeResults
+            )
+        }
+    }
+}
 
-            Card(
-                modifier = Modifier
-                    .padding(8.dp),
-                shape = MaterialTheme.shapes.medium,
-                border = BorderStroke(1.dp, Color.LightGray),
-                elevation = 5.dp
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(selectedAlertBackground)
-                        .pointerInput(selectedAlerts) {
-                            detectTapGestures(
-                                onLongPress = {
-                                    onAlertSelect(alert.alertID)
-                                },
-                                onTap = {
-                                    if (selectedAlerts.isNotEmpty()) {
-                                        onAlertSelect(alert.alertID)
-                                    } else {
-                                        onSeeResults(alert.name, alert.alertID)
-                                    }
-                                }
-                            )
+@Composable
+fun AlertDetail(
+    resultCount: Int,
+    alert: Alert,
+    selectedAlerts: List<Long>,
+    onAlertSelect: (Long) -> Unit,
+    onSeeResults: (String, Long) -> Unit
+) {
+
+    val selectedAlertBackground = if (selectedAlerts.contains(alert.alertID)) {
+        MaterialTheme.colors.primary.copy(alpha = 0.12f)
+    } else {
+        MaterialTheme.colors.background
+    }
+
+    Card(
+        modifier = Modifier
+            .padding(8.dp),
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, Color.LightGray),
+        elevation = 5.dp
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .background(selectedAlertBackground)
+                .pointerInput(selectedAlerts) {
+                    detectTapGestures(
+                        onLongPress = {
+                            onAlertSelect(alert.alertID)
                         },
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .padding(5.dp)
-                                .fillMaxWidth(),
-                            shape = CircleShape,
-                        ) {
-                            Text(
-                                text = "$totalResults",
-                                style = MaterialTheme.typography.h4,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(10.dp)
-                            )
-                        }
-
-                    }
-
-
-                    Column(
-                        modifier = Modifier
-                            .weight(3f)
-                            .padding(10.dp)
-                        //verticalArrangement = Arrangement.Center,
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = alert.name, style = MaterialTheme.typography.h5)
-                            if (alert.status == "disabled") {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_disable),
-                                    contentDescription = "disabled"
-                                )
+                        onTap = {
+                            if (selectedAlerts.isNotEmpty()) {
+                                onAlertSelect(alert.alertID)
+                            } else {
+                                onSeeResults(alert.name, alert.alertID)
                             }
                         }
-                        CowinAlertDivider()
-                        Text(
-                            text = "Pincode: ${alert.pinCode}",
-                            style = MaterialTheme.typography.overline
-                        )
-                        Text(
-                            text = "Vaccines: $vaccines",
-                            style = MaterialTheme.typography.overline
-                        )
-                        Text(
-                            text = "Age Limit: $ageGroup",
-                            style = MaterialTheme.typography.overline
-                        )
-                        Text(
-                            text = "Dose: $doseType",
-                            style = MaterialTheme.typography.overline
-                        )
-                        Text(
-                            text = "Fee Type: $feeType",
-                            style = MaterialTheme.typography.overline
+                    )
+                },
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                Card(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(5.dp)
+                        .fillMaxWidth(),
+                    shape = CircleShape,
+                ) {
+                    Text(
+                        text = "$resultCount",
+                        style = MaterialTheme.typography.h4,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+
+            }
+
+
+            Column(
+                modifier = Modifier
+                    .weight(3f)
+                    .padding(10.dp)
+                //verticalArrangement = Arrangement.Center,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = alert.name, style = MaterialTheme.typography.h5)
+                    if (alert.status == "disabled") {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_disable),
+                            contentDescription = "disabled"
                         )
                     }
                 }
 
+                CowinDivider()
+
+                AlertDetailText("Pincode: ${alert.pinCode}")
+                AlertDetailText("Vaccines: ${alert.getVaccines()}")
+                AlertDetailText("Age Limit: ${alert.getAgeGroups()}")
+                AlertDetailText("Dose: ${alert.getDoseType()}")
+                AlertDetailText("Fee Type: ${alert.getFeeType()}")
             }
         }
+
     }
+
 }
 
 @Composable
-fun CowinAlertDivider() {
-    Divider(
-        modifier = Modifier.padding(top = 8.dp, bottom = 3.dp),
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
+fun AlertDetailText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.overline
     )
-}
-
-@Composable
-fun InsetAwareTopAppBar(
-    title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    navigationIcon: @Composable (() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colors.primaryVariant,
-    contentColor: Color = contentColorFor(backgroundColor),
-    elevation: Dp = 4.dp
-) {
-    Surface(
-        color = backgroundColor,
-        elevation = elevation,
-        modifier = modifier
-    ) {
-        TopAppBar(
-            title = title,
-            navigationIcon = navigationIcon,
-            actions = actions,
-            backgroundColor = Color.Transparent,
-            contentColor = contentColor,
-            elevation = 0.dp,
-            modifier = Modifier
-                .statusBarsPadding()
-                .navigationBarsPadding(bottom = false)
-        )
-    }
-}
-
-fun showToastMsg(context: Context, msg: String) {
-    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-
-}
-
-fun getVaccines(alert: Alert): String {
-    var vaccines: String = ""
-    if (alert.isCovishield && alert.isCovaxin) {
-        vaccines = "any"
-    } else {
-        if (alert.isCovaxin) {
-            vaccines += "covaxin"
-        }
-        if (alert.isCovishield) {
-            vaccines = if (vaccines == "") vaccines + "covishield" else "$vaccines,covishield"
-        }
-    }
-    return vaccines
-
-}
-
-fun getFeeType(alert: Alert): String {
-    var feeType: String = ""
-    if (alert.paid && alert.free) {
-        feeType = "any"
-    } else {
-        if (alert.free) {
-            feeType += "free"
-        }
-        if (alert.paid) {
-            feeType = if (feeType == "") feeType + "paid" else "$feeType,paid"
-        }
-    }
-    return feeType
-}
-
-fun getDoseType(alert: Alert): String {
-    var doseType: String = ""
-    if (alert.dose1 && alert.dose2) {
-        doseType = "any"
-    } else {
-        if (alert.dose1) {
-            doseType += "dose1"
-        }
-        if (alert.dose2) {
-            doseType = if (doseType == "") doseType + "dose2" else "$doseType,dose2"
-        }
-    }
-    return doseType
-}
-
-fun getAgeGroups(alert: Alert): String {
-    var ageGroup: String = ""
-    if (alert.above45 && alert.below45) {
-        ageGroup = "any"
-    } else {
-        if (alert.above45) {
-            ageGroup += ">45"
-        }
-        if (alert.below45) {
-            ageGroup = if (ageGroup == "") "$ageGroup<45" else "$ageGroup,<45"
-        }
-    }
-    return ageGroup
 }
 
 

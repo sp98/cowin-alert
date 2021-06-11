@@ -11,13 +11,13 @@ import com.santoshpillai.cowinalert.R
 import com.santoshpillai.cowinalert.data.local.AlertDatabase
 import com.santoshpillai.cowinalert.data.model.Alert
 import com.santoshpillai.cowinalert.data.model.Center
+import com.santoshpillai.cowinalert.data.service.CowinAPI
+import com.santoshpillai.cowinalert.ui.MainActivity
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 import com.santoshpillai.cowinalert.data.model.Result as CowinResult
-import com.santoshpillai.cowinalert.data.service.CowinAPI
-import com.santoshpillai.cowinalert.ui.MainActivity
 
 data class MyResult(val result: List<CowinResult>, val alertNames: List<String>)
 
