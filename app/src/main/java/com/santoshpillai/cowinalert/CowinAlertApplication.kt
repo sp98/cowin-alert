@@ -1,6 +1,7 @@
 package com.santoshpillai.cowinalert
 
 import android.app.Application
+import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.os.Build
 import androidx.work.*
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.santoshpillai.cowinalert.workers.QueryWorker
+import com.santoshpillai.cowinalert.workers.QueryWorker.Companion.WORK_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,20 +60,15 @@ class CowinAlertApplication : Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val oneTimeRequest = OneTimeWorkRequestBuilder<QueryWorker>()
+        val periodicRequest = PeriodicWorkRequestBuilder<QueryWorker>(15, TimeUnit.MINUTES)
             .setConstraints(constraints)
-            .addTag("CowinQuery")
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                5,
-                TimeUnit.MINUTES
-            )
+            .addTag(WORK_NAME)
             .build()
 
-        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            QueryWorker.WORK_NAME,
-            ExistingWorkPolicy.KEEP,
-            oneTimeRequest
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicRequest
         )
     }
 }
