@@ -34,9 +34,11 @@ fun CreateAlertScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Button(
-                            onClick = { navController.navigate("Home"){
-                                popUpTo("home") { inclusive = true }
-                            } },
+                            onClick = {
+                                navController.navigate("Home") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
@@ -118,6 +120,13 @@ fun CreateAlertScreen(
                             checked = viewModel.isCovaxin,
                             onCheckedChange = viewModel::onCovaxinCheck,
                             checkBoxText = "Covaxin"
+                        )
+
+                        // Sputnik V Checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isSputnikV,
+                            onCheckedChange = viewModel::onSputnikVChange,
+                            checkBoxText = "Sputnik V"
                         )
 
                         Spacer(modifier = Modifier.padding(4.dp))

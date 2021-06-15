@@ -206,7 +206,7 @@ fun ResultScreen(
 
 @Composable
 fun Register(context: Context) {
-    val cowinLoginURL =  stringResource(R.string.cowin_registration_url)
+    val cowinLoginURL = stringResource(R.string.cowin_registration_url)
     val intent = remember {
         Intent(
             Intent.ACTION_VIEW,
@@ -228,9 +228,9 @@ fun Register(context: Context) {
 
 fun getAvailableDoseBgColor(capacity: Int): Color {
     return when (capacity) {
-        in 1..10 -> Color.Yellow
-        0 -> Color.Red
-        else -> Color.Green
+        in 1..10 -> Color.Yellow.copy(alpha = 0.5f)
+        0 -> Color.Red.copy(alpha = 0.3f)
+        else -> Color.Green.copy(alpha = 0.3f)
     }
 }
 

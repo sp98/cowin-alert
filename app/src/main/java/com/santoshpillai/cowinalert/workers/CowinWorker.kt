@@ -88,9 +88,15 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     for (filter in filters) {
                         if (filter.pinCode == center.pincode) {
                             val isValidAgeGroup =
-                                validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
+                                validAgeLimit(
+                                    filter.below45, filter.above45,
+                                    session.minAgeLimit
+                                )
                             val isValidVaccine =
-                                validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
+                                validVaccine(
+                                    filter.isCovishield, filter.isCovaxin,
+                                    filter.isSuptnikV, session.vaccine
+                                )
                             val isValidDose = validDose(
                                 filter.dose1,
                                 filter.dose2,
@@ -164,14 +170,21 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         return isValid
     }
 
-    private fun validVaccine(isCovishield: Boolean, isCovaxin: Boolean, actual: String): Boolean {
+    private fun validVaccine(
+        isCovishield: Boolean, isCovaxin: Boolean,
+        isSuptnikV: Boolean, actual: String
+    ): Boolean {
         var isValid = false
 
-        if (isCovishield && actual == "COVISHIELD") {
+        if (isCovishield && actual.equals("COVISHIELD",true)) {
             isValid = true
         }
 
-        if (isCovaxin && actual == "COVAXIN") {
+        if (isCovaxin && actual.equals("COVAXIN",true)) {
+            isValid = true
+        }
+
+        if (isSuptnikV && actual.equals("Sputnik V",true)) {
             isValid = true
         }
 

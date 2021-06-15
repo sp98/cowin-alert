@@ -23,6 +23,9 @@ data class Alert(
     @ColumnInfo(name = "isCovaxin")
     val isCovaxin: Boolean = false,
 
+    @ColumnInfo(name = "isSuptnikV")
+    val isSuptnikV: Boolean = false,
+
     @ColumnInfo(name = "above45")
     val above45: Boolean = false,
 
@@ -55,6 +58,9 @@ data class Alert(
             }
             if (isCovishield) {
                 vaccines = if (vaccines == "") vaccines + "covishield" else "$vaccines,covishield"
+            }
+            if (isSuptnikV) {
+                vaccines = if (vaccines == "") vaccines + "sputnik V" else "$vaccines,sputnik V"
             }
         }
         return vaccines
