@@ -31,7 +31,6 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result = coroutineScope {
         try {
-            Log.i("testing", "starting worker")
             val database = AlertDatabase.getInstance(applicationContext)
             val filters = database.alertDatabaseDao.getEnabledAlertList()
 
@@ -47,7 +46,6 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     val centers =
                         CowinAPI.retrofitService.getCowinData(pincode, today).execute().body()
                     if (centers != null) {
-                        println("centers - ${centers.centers}")
                         val test = matchFilter(filters, centers.centers)
                         if (test.result.isNotEmpty()) {
                             results = results + test.result

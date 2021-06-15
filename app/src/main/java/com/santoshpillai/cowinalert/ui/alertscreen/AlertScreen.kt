@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,30 +77,37 @@ fun AlertScreen(
                                 textAlign = TextAlign.Center
                             )
                         },
-                        actions = {
+                        navigationIcon = {
                             if (isSelected) {
                                 IconButton(
-                                    onClick = onClearAllSelections,
+                                    onClick = onClearAllSelections
                                 ) {
-                                    Icon(
-                                        Icons.Filled.ArrowBack,
-                                        contentDescription = "back"
-                                    )
+                                    Icon(Icons.Filled.ArrowBack, stringResource(R.string.back))
                                 }
+                            } else{
+                                Icon(painter = painterResource(id= R.drawable.icon),
+                                    contentDescription = "icon" )
+                            }
+                        },
+                        actions = {
                                 IconButton(
+                                    enabled = selectedAlerts.isNotEmpty(),
                                     onClick = onDeleteAlerts,
                                 ) {
                                     Icon(
                                         Icons.Filled.Delete,
-                                        contentDescription = "delete"
+                                        contentDescription = stringResource(R.string.delete)
                                     )
                                 }
 
                                 Box() {
-                                    IconButton(onClick = { expanded = true }) {
+                                    IconButton(
+                                        enabled = selectedAlerts.isNotEmpty(),
+                                        onClick = { expanded = true },
+                                    ) {
                                         Icon(
                                             Icons.Filled.MoreVert,
-                                            contentDescription = "overflow menu"
+                                            contentDescription = stringResource(R.string.overflow_menu)
                                         )
                                     }
                                     DropdownMenu(
@@ -113,19 +121,17 @@ fun AlertScreen(
 
                                             },
                                         ) {
-                                            Text("disable")
+                                            Text(stringResource(R.string.disable))
                                         }
                                         DropdownMenuItem(
                                             onClick = {
                                                 onEnableAlerts(selectedAlerts)
                                                 expanded = false
                                             }) {
-                                            Text("enable")
+                                            Text(stringResource(R.string.enable))
                                         }
                                     }
                                 }
-
-                            }
                         }
                     )
                 }

@@ -12,10 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -54,12 +51,11 @@ fun ResultScreen(
                         )
                     },
                     elevation = 12.dp,
-                    actions = {
-                        IconButton(onClick = onCancel) {
-                            Icon(
-                                Icons.Filled.Close,
-                                contentDescription = "close"
-                            )
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onCancel
+                        ) {
+                            Icon(Icons.Filled.ArrowBack, stringResource(R.string.back))
                         }
                     }
                 )
@@ -106,7 +102,7 @@ fun ResultScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Text(
-                                        text = "Triggered On: ${result.triggeredOn}",
+                                        text = "${result.triggeredOn}",
                                         style = MaterialTheme.typography.h6
                                     )
                                     IconButton(onClick = { shareData(context, result) }) {
