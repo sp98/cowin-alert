@@ -51,23 +51,23 @@ fun AlertScreen(
             Scaffold(
                 floatingActionButtonPosition = FabPosition.End,
                 floatingActionButton = {
-                   if (showAddIcon){
-                       FloatingActionButton(
-                           modifier = Modifier
-                               .padding(5.dp),
-                           shape = CircleShape,
-                           onClick = {
-                               navController.navigate("CreateAlert")
-                           },
-                           backgroundColor = MaterialTheme.colors.primary,
-                           elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                       ) {
-                           Icon(
-                               painter = painterResource(id = R.drawable.ic_add),
-                               contentDescription = "add"
-                           )
-                       }
-                   }
+                    if (showAddIcon) {
+                        FloatingActionButton(
+                            modifier = Modifier
+                                .padding(5.dp),
+                            shape = CircleShape,
+                            onClick = {
+                                navController.navigate("CreateAlert")
+                            },
+                            backgroundColor = MaterialTheme.colors.primary,
+                            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add),
+                                contentDescription = "add"
+                            )
+                        }
+                    }
                 },
                 topBar = {
                     InsetAwareTopAppBar(

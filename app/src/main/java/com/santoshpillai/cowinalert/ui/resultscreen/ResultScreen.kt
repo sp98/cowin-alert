@@ -3,23 +3,24 @@ package com.santoshpillai.cowinalert.ui.resultscreen
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,11 @@ fun ResultScreen(
                         }
                     }
                 )
+            },
+            floatingActionButton = {
+                if (results.isNotEmpty()) {
+                    Register(context)
+                }
             }
         ) {
 
@@ -76,7 +82,7 @@ fun ResultScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     Text(
                         "No results found",
                         style = MaterialTheme.typography.h5,
@@ -111,7 +117,7 @@ fun ResultScreen(
                                     )
                                 },
                             border = BorderStroke(1.dp, Color.LightGray),
-                            shape = MaterialTheme.shapes.medium,
+                            shape = MaterialTheme.shapes.small,
                         ) {
                             Column(
                                 modifier = Modifier
@@ -148,25 +154,43 @@ fun ResultScreen(
                                 )
 
                                 Text(
-                                    text = "Available Capacity: ${result.availableCapacity}",
-                                    style = MaterialTheme.typography.overline
-                                )
-
-                                Text(
                                     text = "Fee Type: ${result.feeType}",
                                     style = MaterialTheme.typography.overline
                                 )
 
-                                
                                 Text(
-                                    text = "Dose 1 Capacity: ${result.dose1Capacity}",
+                                    text = "Available Capacity: ${result.availableCapacity}",
                                     style = MaterialTheme.typography.overline
                                 )
 
-                                Text(
-                                    text = "Dose 2 Capacity: ${result.dose2Capacity}",
-                                    style = MaterialTheme.typography.overline
-                                )
+                                CowinDivider()
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    val d1backgroundColor =
+                                        getAvailableDoseBgColor(result.dose1Capacity)
+                                    val d2backgroundColor =
+                                        getAvailableDoseBgColor(result.dose2Capacity)
+
+                                    Text(
+                                        text = "Dose 1 Capacity: ${result.dose1Capacity}",
+                                        style = MaterialTheme.typography.overline,
+                                        modifier = Modifier
+                                            .background(d1backgroundColor)
+                                    )
+
+                                    Text(
+                                        text = "Dose 2 Capacity: ${result.dose2Capacity}",
+                                        style = MaterialTheme.typography.overline,
+                                        modifier = Modifier
+                                            .background(d2backgroundColor)
+                                    )
+                                }
+
 
                             }
                         }
@@ -179,6 +203,35 @@ fun ResultScreen(
     }
 }
 
+@Composable
+fun Register(context: Context) {
+    val cowinLoginURL =  stringResource(R.string.cowin_registration_url)
+    val intent = remember {
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(cowinLoginURL)
+        )
+    }
+    FloatingActionButton(
+        onClick = { context.startActivity(intent) },
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Text(
+            stringResource(R.string.register),
+            modifier = Modifier.padding(horizontal = 10.dp),
+            style = MaterialTheme.typography.button
+        )
+    }
+}
+
+
+fun getAvailableDoseBgColor(capacity: Int): Color {
+    return when (capacity) {
+        in 1..10 -> Color.Yellow
+        0 -> Color.Red
+        else -> Color.Green
+    }
+}
 
 @Preview(name = "Result Detail Screen")
 @Composable
@@ -196,9 +249,9 @@ fun PreviewResultDetails() {
                 blockName = "NIT-2",
                 vaccine = "Covishield",
                 feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
+                availableCapacity = 9,
+                dose1Capacity = 9,
+                dose2Capacity = 0,
                 triggeredOn = "08-06-2020 08:45"
             ),
             Result(
@@ -211,9 +264,9 @@ fun PreviewResultDetails() {
                 blockName = "NIT-2",
                 vaccine = "covaxin",
                 feeType = "paid",
-                availableCapacity = 20,
-                dose1Capacity = 10,
-                dose2Capacity = 20,
+                availableCapacity = 0,
+                dose1Capacity = 0,
+                dose2Capacity = 0,
                 triggeredOn = "08-06-2020 08:45"
             ),
             Result(
@@ -297,13 +350,13 @@ fun PreviewResultDetails() {
     }
 }
 
-
 private fun getShareIntent(context: Context, result: Result): Intent {
     return ShareCompat.IntentBuilder.from(context as Activity)
         .setText(
             "Vaccination Available:\n" +
                     "Hospital Name:  ${result.hospitalName}\n" +
                     "Address: ${result.address}\n" +
+                    "Vaccine: ${result.vaccine}\n" +
                     "Age Group:  ${result.ageGroup}+\n" +
                     "Date:  ${result.availableOn}\n" +
                     "Total Doses:  ${result.availableCapacity}\n" +
@@ -318,3 +371,4 @@ private fun getShareIntent(context: Context, result: Result): Intent {
 private fun shareData(context: Context, result: Result) {
     startActivity(context, getShareIntent(context, result), null)
 }
+

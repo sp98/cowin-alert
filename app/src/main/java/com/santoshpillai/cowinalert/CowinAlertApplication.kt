@@ -1,7 +1,6 @@
 package com.santoshpillai.cowinalert
 
 import android.app.Application
-import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context

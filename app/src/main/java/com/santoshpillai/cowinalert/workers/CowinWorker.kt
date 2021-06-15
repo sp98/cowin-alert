@@ -47,7 +47,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     val centers =
                         CowinAPI.retrofitService.getCowinData(pincode, today).execute().body()
                     if (centers != null) {
-                        println("centers - ${centers.centers    }")
+                        println("centers - ${centers.centers}")
                         val test = matchFilter(filters, centers.centers)
                         if (test.result.isNotEmpty()) {
                             results = results + test.result
