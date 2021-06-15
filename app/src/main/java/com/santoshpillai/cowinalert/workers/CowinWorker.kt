@@ -107,6 +107,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                     stateName = center.stateName,
                                     districtName = center.districtName,
                                     blockName = center.blockName,
+                                    vaccine = session.vaccine,
                                     feeType = center.feeType,
                                     availableCapacity = session.availableCapacity,
                                     dose1Capacity = session.availableCapacityDose1,

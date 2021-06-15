@@ -136,6 +136,12 @@ fun ResultScreen(
                                     text = "Address: ${result.address}",
                                     style = MaterialTheme.typography.overline
                                 )
+
+                                Text(
+                                    text = "Vaccine : ${result.vaccine}",
+                                    style = MaterialTheme.typography.overline
+                                )
+
                                 Text(
                                     text = "Age Group: ${result.ageGroup}",
                                     style = MaterialTheme.typography.overline
@@ -145,16 +151,20 @@ fun ResultScreen(
                                     text = "Available Capacity: ${result.availableCapacity}",
                                     style = MaterialTheme.typography.overline
                                 )
+
+                                Text(
+                                    text = "Fee Type: ${result.feeType}",
+                                    style = MaterialTheme.typography.overline
+                                )
+
+                                
                                 Text(
                                     text = "Dose 1 Capacity: ${result.dose1Capacity}",
                                     style = MaterialTheme.typography.overline
                                 )
+
                                 Text(
                                     text = "Dose 2 Capacity: ${result.dose2Capacity}",
-                                    style = MaterialTheme.typography.overline
-                                )
-                                Text(
-                                    text = "Fee Type: ${result.feeType}",
                                     style = MaterialTheme.typography.overline
                                 )
 
@@ -184,6 +194,7 @@ fun PreviewResultDetails() {
                 stateName = "Haryana",
                 districtName = "faridabad",
                 blockName = "NIT-2",
+                vaccine = "Covishield",
                 feeType = "paid",
                 availableCapacity = 20,
                 dose1Capacity = 10,
@@ -198,6 +209,7 @@ fun PreviewResultDetails() {
                 stateName = "Haryana",
                 districtName = "faridabad",
                 blockName = "NIT-2",
+                vaccine = "covaxin",
                 feeType = "paid",
                 availableCapacity = 20,
                 dose1Capacity = 10,
@@ -212,6 +224,7 @@ fun PreviewResultDetails() {
                 stateName = "Haryana",
                 districtName = "faridabad",
                 blockName = "NIT-2",
+                vaccine = "covaxin",
                 feeType = "paid",
                 dose1Capacity = 10,
                 availableCapacity = 20,
