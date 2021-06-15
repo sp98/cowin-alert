@@ -3,7 +3,6 @@ package com.santoshpillai.cowinalert.workers
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
@@ -206,7 +205,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(6, 0, 0)) && now.isBefore(LocalTime.of(23, 0, 0))
+        return now.isAfter(LocalTime.of(7, 0, 0)) && now.isBefore(LocalTime.of(20, 0, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {
@@ -214,7 +213,6 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         val formatter = DateTimeFormatter.ofPattern(pattern)
         return current.format(formatter)
     }
-
 
     private fun sendNotification(content: String) {
         val intent = Intent(applicationContext, MainActivity::class.java)

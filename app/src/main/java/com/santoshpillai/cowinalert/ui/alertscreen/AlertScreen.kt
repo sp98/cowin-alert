@@ -84,54 +84,63 @@ fun AlertScreen(
                                 ) {
                                     Icon(Icons.Filled.ArrowBack, stringResource(R.string.back))
                                 }
-                            } else{
-                                Icon(painter = painterResource(id= R.drawable.icon),
-                                    contentDescription = "icon" )
-                            }
-                        },
-                        actions = {
+                            } else {
                                 IconButton(
-                                    enabled = selectedAlerts.isNotEmpty(),
-                                    onClick = onDeleteAlerts,
+                                    onClick = {},
+                                    modifier = Modifier.padding(2.dp)
                                 ) {
                                     Icon(
-                                        Icons.Filled.Delete,
-                                        contentDescription = stringResource(R.string.delete)
+                                        painter = painterResource(id = R.drawable.icon),
+                                        modifier = Modifier.size(40.dp),
+                                        contentDescription = "icon"
                                     )
                                 }
 
-                                Box() {
-                                    IconButton(
-                                        enabled = selectedAlerts.isNotEmpty(),
-                                        onClick = { expanded = true },
-                                    ) {
-                                        Icon(
-                                            Icons.Filled.MoreVert,
-                                            contentDescription = stringResource(R.string.overflow_menu)
-                                        )
-                                    }
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false })
-                                    {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onDisableAlerts(selectedAlerts)
-                                                expanded = false
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                enabled = selectedAlerts.isNotEmpty(),
+                                onClick = onDeleteAlerts,
+                            ) {
+                                Icon(
+                                    Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.delete)
+                                )
+                            }
 
-                                            },
-                                        ) {
-                                            Text(stringResource(R.string.disable))
-                                        }
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onEnableAlerts(selectedAlerts)
-                                                expanded = false
-                                            }) {
-                                            Text(stringResource(R.string.enable))
-                                        }
+                            Box() {
+                                IconButton(
+                                    enabled = selectedAlerts.isNotEmpty(),
+                                    onClick = { expanded = true },
+                                ) {
+                                    Icon(
+                                        Icons.Filled.MoreVert,
+                                        contentDescription = stringResource(R.string.overflow_menu)
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false })
+                                {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onDisableAlerts(selectedAlerts)
+                                            expanded = false
+
+                                        },
+                                    ) {
+                                        Text(stringResource(R.string.disable))
+                                    }
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onEnableAlerts(selectedAlerts)
+                                            expanded = false
+                                        }) {
+                                        Text(stringResource(R.string.enable))
                                     }
                                 }
+                            }
                         }
                     )
                 }
