@@ -77,7 +77,9 @@ class MainActivity : ComponentActivity() {
                     ResultScreen(
                         alertName = alertName,
                         results = results,
-                        onCancel = { navController.navigate("home") },
+                        onCancel = { navController.navigate("home"){
+                            popUpTo("home") { inclusive = true }
+                        } },
                         selectedResult = selectedResult,
                         onSelectResult = { selectedResult = it }
 

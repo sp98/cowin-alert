@@ -11,7 +11,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.santoshpillai.cowinalert.ui.common.InsetAwareTopAppBar
 import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 import com.santoshpillai.cowinalert.util.showToastMsg
@@ -35,7 +34,9 @@ fun CreateAlertScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Button(
-                            onClick = { navController.navigate("Home") },
+                            onClick = { navController.navigate("Home"){
+                                popUpTo("home") { inclusive = true }
+                            } },
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {

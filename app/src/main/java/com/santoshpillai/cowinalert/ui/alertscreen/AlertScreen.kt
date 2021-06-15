@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.santoshpillai.cowinalert.R
 import com.santoshpillai.cowinalert.data.model.Alert
 import com.santoshpillai.cowinalert.data.model.Result
