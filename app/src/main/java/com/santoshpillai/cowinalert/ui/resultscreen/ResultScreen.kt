@@ -12,12 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,8 +40,6 @@ fun ResultScreen(
     alertName: String?,
     results: List<Result>,
     onCancel: () -> Unit,
-    selectedResult: Result,
-    onSelectResult: (Result) -> Unit
 ) {
     val context = LocalContext.current
     val alertName = alertName?.take(20)
@@ -54,14 +55,6 @@ fun ResultScreen(
                     },
                     elevation = 12.dp,
                     actions = {
-                        if (selectedResult != Result()) {
-                            IconButton(onClick = { shareData(context, selectedResult) }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_share),
-                                    contentDescription = "share"
-                                )
-                            }
-                        }
                         IconButton(onClick = onCancel) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_close),
@@ -96,39 +89,31 @@ fun ResultScreen(
                 LazyColumn() {
 
                     items(items = results) { result ->
-                        val selectedAlertBackground = if (selectedResult == result) {
-                            MaterialTheme.colors.primary.copy(alpha = 0.12f)
-                        } else {
-                            MaterialTheme.colors.background
-                        }
                         Card(
                             modifier = Modifier
                                 .padding(10.dp)
-                                .fillMaxWidth()
-                                .pointerInput(selectedResult) {
-                                    detectTapGestures(
-                                        onTap = {
-                                            if (selectedResult == result) {
-                                                onSelectResult(Result())
-                                            } else {
-                                                onSelectResult(result)
-                                            }
-
-                                        }
-                                    )
-                                },
+                                .fillMaxWidth(),
                             border = BorderStroke(1.dp, Color.LightGray),
                             shape = MaterialTheme.shapes.small,
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .background(selectedAlertBackground)
                                     .padding(10.dp)
                             ) {
-                                Text(
-                                    text = "Triggered On: ${result.triggeredOn}",
-                                    style = MaterialTheme.typography.h6
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ){
+                                    Text(
+                                        text = "Triggered On: ${result.triggeredOn}",
+                                        style = MaterialTheme.typography.h6
+                                    )
+                                    IconButton(onClick = { shareData(context, result) }) {
+                                        Icon(Icons.Filled.Share, stringResource(R.string.share))
+                                    }
+
+                                }
                                 Text(
                                     text = "Hospital: ${result.hospitalName}",
                                     style = MaterialTheme.typography.body1
@@ -150,7 +135,7 @@ fun ResultScreen(
                                 )
 
                                 Text(
-                                    text = "Age Group: ${result.ageGroup}",
+                                    text = "Age Group: ${result.ageGroup}+",
                                     style = MaterialTheme.typography.overline
                                 )
 
@@ -346,8 +331,7 @@ fun PreviewResultDetails() {
 
 
     resultMap[0]?.get(0)?.let {
-        ResultScreen(alertName = "my alert 1", results = resultMap[0]!!, {},
-            it, {})
+        ResultScreen(alertName = "my alert 1", results = resultMap[0]!!,) {}
     }
 }
 
@@ -362,7 +346,8 @@ private fun getShareIntent(context: Context, result: Result): Intent {
                     "Date:  ${result.availableOn}\n" +
                     "Total Doses:  ${result.availableCapacity}\n" +
                     "Dose 1:  ${result.dose1Capacity}\n" +
-                    "Dose 2:  ${result.dose2Capacity}\n"
+                    "Dose 2:  ${result.dose2Capacity}\n\n" +
+                    "Register: https://selfregistration.cowin.gov.in/"
         )
         .setType("text/plain")
         .intent

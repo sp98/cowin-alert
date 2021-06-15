@@ -2,5 +2,6 @@
     <string name="app_name">Cowin Alert</string>
     <string name="register">REGISTER</string>
     <string name="cowin_registration_url">https://selfregistration.cowin.gov.in/</string>
+    <string name="share">share</string>
 
 </resources>

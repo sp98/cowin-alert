@@ -76,7 +76,6 @@ class MainActivity : ComponentActivity() {
                     val alertName = it.arguments?.getString("alertName")
                     val alertID = it.arguments?.getLong("alertID")
                     val results = alertViewModel.result.value?.get(alertID) ?: listOf<Result>()
-                    var selectedResult by remember { mutableStateOf(Result()) }
                     ResultScreen(
                         alertName = alertName,
                         results = results,
@@ -85,8 +84,6 @@ class MainActivity : ComponentActivity() {
                                 popUpTo("home") { inclusive = true }
                             }
                         },
-                        selectedResult = selectedResult,
-                        onSelectResult = { selectedResult = it }
 
                     )
                 }
