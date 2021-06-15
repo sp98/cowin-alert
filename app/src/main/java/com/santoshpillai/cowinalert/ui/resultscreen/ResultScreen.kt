@@ -41,6 +41,7 @@ fun ResultScreen(
     onSelectResult: (Result) -> Unit
 ) {
     val context = LocalContext.current
+    val alertName = alertName?.take(20)
     CowinAlertTheme() {
         Scaffold(
             topBar = {
@@ -178,14 +179,14 @@ fun ResultScreen(
 
                                     Text(
                                         text = "Dose 1 Capacity: ${result.dose1Capacity}",
-                                        style = MaterialTheme.typography.overline,
+                                        style = MaterialTheme.typography.body2,
                                         modifier = Modifier
                                             .background(d1backgroundColor)
                                     )
 
                                     Text(
                                         text = "Dose 2 Capacity: ${result.dose2Capacity}",
-                                        style = MaterialTheme.typography.overline,
+                                        style = MaterialTheme.typography.body2,
                                         modifier = Modifier
                                             .background(d2backgroundColor)
                                     )
@@ -219,7 +220,7 @@ fun Register(context: Context) {
         Text(
             stringResource(R.string.register),
             modifier = Modifier.padding(horizontal = 10.dp),
-            style = MaterialTheme.typography.button
+            style = MaterialTheme.typography.body2
         )
     }
 }

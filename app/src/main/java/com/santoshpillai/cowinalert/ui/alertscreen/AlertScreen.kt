@@ -189,7 +189,7 @@ fun AlertDetail(
     Card(
         modifier = Modifier
             .padding(8.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         border = BorderStroke(1.dp, Color.LightGray),
         elevation = 5.dp
     ) {
@@ -246,7 +246,7 @@ fun AlertDetail(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = alert.name, style = MaterialTheme.typography.h5)
+                    Text(text = alert.name.take(20), style = MaterialTheme.typography.h6)
                     if (alert.status == "disabled") {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_disable),

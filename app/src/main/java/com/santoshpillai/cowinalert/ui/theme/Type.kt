@@ -73,6 +73,7 @@ val CowinTypography = Typography(
     ),
     body2 = TextStyle(
         fontFamily = Montserrat,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp
     ),
     button = TextStyle(
