@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +62,7 @@ fun AlertScreen(
                             elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_add),
+                                Icons.Filled.Add,
                                 contentDescription = "add"
                             )
                         }
@@ -82,7 +82,7 @@ fun AlertScreen(
                                     onClick = onClearAllSelections,
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_back_arrow),
+                                        Icons.Filled.ArrowBack,
                                         contentDescription = "back"
                                     )
                                 }
@@ -90,7 +90,7 @@ fun AlertScreen(
                                     onClick = onDeleteAlerts,
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_delete),
+                                        Icons.Filled.Delete,
                                         contentDescription = "delete"
                                     )
                                 }
@@ -248,7 +248,7 @@ fun AlertDetail(
                     Text(text = alert.name.take(20), style = MaterialTheme.typography.h6)
                     if (alert.status == "disabled") {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_disable),
+                            Icons.Filled.Lock,
                             contentDescription = "disabled"
                         )
                     }

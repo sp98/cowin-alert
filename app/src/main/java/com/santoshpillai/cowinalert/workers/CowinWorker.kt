@@ -60,6 +60,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
                 if (results.isNotEmpty()) {
                     for (result in results) {
+                        database.alertDatabaseDao.deleteResult(result.alertID)
                         database.alertDatabaseDao.insertResult(result)
                     }
                     val msg = "Triggered: ${resultAlerts.joinToString(" ,")}"
@@ -176,15 +177,15 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
     ): Boolean {
         var isValid = false
 
-        if (isCovishield && actual.equals("COVISHIELD",true)) {
+        if (isCovishield && actual.equals("COVISHIELD", true)) {
             isValid = true
         }
 
-        if (isCovaxin && actual.equals("COVAXIN",true)) {
+        if (isCovaxin && actual.equals("COVAXIN", true)) {
             isValid = true
         }
 
-        if (isSuptnikV && actual.equals("Sputnik V",true)) {
+        if (isSuptnikV && actual.equals("Sputnik V", true)) {
             isValid = true
         }
 
@@ -207,7 +208,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(6, 0, 0)) && now.isBefore(LocalTime.of(20, 0, 0))
+        return now.isAfter(LocalTime.of(6, 0, 0)) && now.isBefore(LocalTime.of(23, 0, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {
