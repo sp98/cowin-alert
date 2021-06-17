@@ -47,6 +47,8 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     if (centers != null) {
                         val test = matchFilter(filters, centers.centers)
                         if (test.result.isNotEmpty()) {
+                            // clear previous results for this alert ID
+                            database.alertDatabaseDao.deleteResult(test.result[0].alertID)
                             results = results + test.result
                         }
                         if (test.alertNames.isNotEmpty()) {
@@ -57,7 +59,6 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
                 if (results.isNotEmpty()) {
                     for (result in results) {
-                        database.alertDatabaseDao.deleteResult(result.alertID)
                         database.alertDatabaseDao.insertResult(result)
                     }
                     val msg = "Triggered: ${resultAlerts.joinToString(" ,")}"
