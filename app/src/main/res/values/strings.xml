@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">CowinAlert</string>
+    <string name="app_name">Cowin Alert</string>
+    <string name="register">REGISTER</string>
+    <string name="cowin_registration_url">https://selfregistration.cowin.gov.in/</string>
+    <string name="share">share</string>
+    <string name="back">back</string>
+    <string name="delete">delete</string>
+    <string name="overflow_menu">overflow menu</string>
+    <string name="disable">disable</string>
+    <string name="enable">enable</string>
 </resources>

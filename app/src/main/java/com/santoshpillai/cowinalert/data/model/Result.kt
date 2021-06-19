@@ -27,6 +27,9 @@ data class Result(
     @ColumnInfo(name = "block_name")
     val blockName: String = "",
 
+    @ColumnInfo(name = "vaccine")
+    val vaccine: String = "",
+
     @ColumnInfo(name = "fee_type")
     val feeType: String = "",
 

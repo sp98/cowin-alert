@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.santoshpillai.cowinalert.data.local.AlertDatabaseDao
 import com.santoshpillai.cowinalert.data.model.Alert
 import kotlinx.coroutines.*
@@ -60,6 +59,8 @@ class CreateAlertViewModel(
 
     var isCovaxin: Boolean by mutableStateOf(false)
 
+    var isSputnikV: Boolean by mutableStateOf(false)
+
     var isAbove45: Boolean by mutableStateOf(false)
 
     var isBelow45: Boolean by mutableStateOf(false)
@@ -86,6 +87,10 @@ class CreateAlertViewModel(
 
     fun onCovaxinCheck(covaxin: Boolean) {
         isCovaxin = covaxin
+    }
+
+    fun onSputnikVChange(sputnikV: Boolean) {
+        isSputnikV = sputnikV
     }
 
     fun onAbove45check(above45: Boolean) {
@@ -117,6 +122,7 @@ class CreateAlertViewModel(
         pin = ""
         isCovishield = false
         isCovaxin = false
+        isSputnikV = false
         isAbove45 = false
         isBelow45 = false
         isDose1 = false
@@ -132,6 +138,7 @@ class CreateAlertViewModel(
             pinCode = pin.toLong(),
             isCovishield = isCovishield,
             isCovaxin = isCovaxin,
+            isSuptnikV = isSputnikV,
             above45 = isAbove45,
             below45 = isBelow45,
             dose1 = isDose1,

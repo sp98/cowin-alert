@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.santoshpillai.cowinalert.data.model.Alert
 import com.santoshpillai.cowinalert.data.model.Result
 
-@Database(entities = [Alert::class, Result::class], version = 3, exportSchema = false)
+@Database(entities = [Alert::class, Result::class], version = 5, exportSchema = false)
 abstract class AlertDatabase : RoomDatabase() {
 
     abstract val alertDatabaseDao: AlertDatabaseDao

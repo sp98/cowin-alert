@@ -9,18 +9,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.santoshpillai.cowinalert.R
 import com.santoshpillai.cowinalert.data.model.Alert
 import com.santoshpillai.cowinalert.data.model.Result
@@ -51,23 +51,23 @@ fun AlertScreen(
             Scaffold(
                 floatingActionButtonPosition = FabPosition.End,
                 floatingActionButton = {
-                   if (showAddIcon){
-                       FloatingActionButton(
-                           modifier = Modifier
-                               .padding(5.dp),
-                           shape = CircleShape,
-                           onClick = {
-                               navController.navigate("CreateAlert")
-                           },
-                           backgroundColor = MaterialTheme.colors.primary,
-                           elevation = FloatingActionButtonDefaults.elevation(8.dp),
-                       ) {
-                           Icon(
-                               painter = painterResource(id = R.drawable.ic_add),
-                               contentDescription = "add"
-                           )
-                       }
-                   }
+                    if (showAddIcon) {
+                        FloatingActionButton(
+                            modifier = Modifier
+                                .padding(5.dp),
+                            shape = CircleShape,
+                            onClick = {
+                                navController.navigate("CreateAlert")
+                            },
+                            backgroundColor = MaterialTheme.colors.primary,
+                            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+                        ) {
+                            Icon(
+                                Icons.Filled.Add,
+                                contentDescription = "add"
+                            )
+                        }
+                    }
                 },
                 topBar = {
                     InsetAwareTopAppBar(
@@ -77,55 +77,69 @@ fun AlertScreen(
                                 textAlign = TextAlign.Center
                             )
                         },
-                        actions = {
+                        navigationIcon = {
                             if (isSelected) {
                                 IconButton(
-                                    onClick = onClearAllSelections,
+                                    onClick = onClearAllSelections
                                 ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_back_arrow),
-                                        contentDescription = "back"
-                                    )
+                                    Icon(Icons.Filled.ArrowBack, stringResource(R.string.back))
                                 }
+                            } else {
                                 IconButton(
-                                    onClick = onDeleteAlerts,
+                                    onClick = {},
+                                    modifier = Modifier.padding(2.dp)
                                 ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_delete),
-                                        contentDescription = "delete"
+                                        painter = painterResource(id = R.drawable.icon),
+                                        modifier = Modifier.size(40.dp),
+                                        contentDescription = "icon"
                                     )
                                 }
 
-                                Box() {
-                                    IconButton(onClick = { expanded = true }) {
-                                        Icon(
-                                            Icons.Filled.MoreVert,
-                                            contentDescription = "overflow menu"
-                                        )
-                                    }
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false })
-                                    {
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onDisableAlerts(selectedAlerts)
-                                                expanded = false
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                enabled = selectedAlerts.isNotEmpty(),
+                                onClick = onDeleteAlerts,
+                            ) {
+                                Icon(
+                                    Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.delete)
+                                )
+                            }
 
-                                            },
-                                        ) {
-                                            Text("disable")
-                                        }
-                                        DropdownMenuItem(
-                                            onClick = {
-                                                onEnableAlerts(selectedAlerts)
-                                                expanded = false
-                                            }) {
-                                            Text("enable")
-                                        }
+                            Box() {
+                                IconButton(
+                                    enabled = selectedAlerts.isNotEmpty(),
+                                    onClick = { expanded = true },
+                                ) {
+                                    Icon(
+                                        Icons.Filled.MoreVert,
+                                        contentDescription = stringResource(R.string.overflow_menu)
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false })
+                                {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onDisableAlerts(selectedAlerts)
+                                            expanded = false
+
+                                        },
+                                    ) {
+                                        Text(stringResource(R.string.disable))
+                                    }
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onEnableAlerts(selectedAlerts)
+                                            expanded = false
+                                        }) {
+                                        Text(stringResource(R.string.enable))
                                     }
                                 }
-
                             }
                         }
                     )
@@ -189,7 +203,7 @@ fun AlertDetail(
     Card(
         modifier = Modifier
             .padding(8.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         border = BorderStroke(1.dp, Color.LightGray),
         elevation = 5.dp
     ) {
@@ -246,10 +260,10 @@ fun AlertDetail(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = alert.name, style = MaterialTheme.typography.h5)
+                    Text(text = alert.name.take(20), style = MaterialTheme.typography.h6)
                     if (alert.status == "disabled") {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_disable),
+                            Icons.Filled.Lock,
                             contentDescription = "disabled"
                         )
                     }

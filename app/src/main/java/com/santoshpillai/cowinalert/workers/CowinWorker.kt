@@ -45,9 +45,10 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     val centers =
                         CowinAPI.retrofitService.getCowinData(pincode, today).execute().body()
                     if (centers != null) {
-                        println("centers - ${centers.centers    }")
                         val test = matchFilter(filters, centers.centers)
                         if (test.result.isNotEmpty()) {
+                            // clear previous results for this alert ID
+                            database.alertDatabaseDao.deleteResult(test.result[0].alertID)
                             results = results + test.result
                         }
                         if (test.alertNames.isNotEmpty()) {
@@ -64,7 +65,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     sendNotification(msg)
                 }
             }
-            Result.retry()
+            Result.success()
         } catch (e: Exception) {
             println("failed with exception ${e.message}")
             Result.retry()
@@ -86,9 +87,15 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                     for (filter in filters) {
                         if (filter.pinCode == center.pincode) {
                             val isValidAgeGroup =
-                                validAgeLimit(filter.below45, filter.above45, session.minAgeLimit)
+                                validAgeLimit(
+                                    filter.below45, filter.above45,
+                                    session.minAgeLimit
+                                )
                             val isValidVaccine =
-                                validVaccine(filter.isCovishield, filter.isCovaxin, session.vaccine)
+                                validVaccine(
+                                    filter.isCovishield, filter.isCovaxin,
+                                    filter.isSuptnikV, session.vaccine
+                                )
                             val isValidDose = validDose(
                                 filter.dose1,
                                 filter.dose2,
@@ -105,6 +112,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
                                     stateName = center.stateName,
                                     districtName = center.districtName,
                                     blockName = center.blockName,
+                                    vaccine = session.vaccine,
                                     feeType = center.feeType,
                                     availableCapacity = session.availableCapacity,
                                     dose1Capacity = session.availableCapacityDose1,
@@ -161,14 +169,21 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         return isValid
     }
 
-    private fun validVaccine(isCovishield: Boolean, isCovaxin: Boolean, actual: String): Boolean {
+    private fun validVaccine(
+        isCovishield: Boolean, isCovaxin: Boolean,
+        isSuptnikV: Boolean, actual: String
+    ): Boolean {
         var isValid = false
 
-        if (isCovishield && actual == "COVISHIELD") {
+        if (isCovishield && actual.equals("COVISHIELD", true)) {
             isValid = true
         }
 
-        if (isCovaxin && actual == "COVAXIN") {
+        if (isCovaxin && actual.equals("COVAXIN", true)) {
+            isValid = true
+        }
+
+        if (isSuptnikV && actual.equals("Sputnik V", true)) {
             isValid = true
         }
 
@@ -191,7 +206,7 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
 
     private fun isCorrectTime(): Boolean {
         val now = LocalTime.now()
-        return now.isAfter(LocalTime.of(8, 0, 0)) && now.isBefore(LocalTime.of(18, 0, 0))
+        return now.isAfter(LocalTime.of(7, 0, 0)) && now.isBefore(LocalTime.of(20, 0, 0))
     }
 
     private fun getFormattedTime(pattern: String): String {
@@ -199,7 +214,6 @@ class QueryWorker(appContext: Context, workerParams: WorkerParameters) :
         val formatter = DateTimeFormatter.ofPattern(pattern)
         return current.format(formatter)
     }
-
 
     private fun sendNotification(content: String) {
         val intent = Intent(applicationContext, MainActivity::class.java)

@@ -2,20 +2,26 @@ package com.santoshpillai.cowinalert.ui.createscreen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.santoshpillai.cowinalert.ui.common.InsetAwareTopAppBar
 import com.santoshpillai.cowinalert.ui.theme.CowinAlertTheme
 import com.santoshpillai.cowinalert.util.showToastMsg
 
+@ExperimentalComposeUiApi
 @Composable
 fun CreateAlertScreen(
     viewModel: CreateAlertViewModel,
@@ -26,6 +32,7 @@ fun CreateAlertScreen(
     val pincodeRegex = Regex("^[1-9]{1}[0-9]{2}[0-9]{3}$")
     val scrollState = rememberScrollState()
 
+
     CowinAlertTheme() {
         Surface() {
             Scaffold(
@@ -35,7 +42,11 @@ fun CreateAlertScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Button(
-                            onClick = { navController.navigate("Home") },
+                            onClick = {
+                                navController.navigate("Home") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
                             modifier = Modifier
                                 .padding(8.dp)
                         ) {
@@ -119,6 +130,13 @@ fun CreateAlertScreen(
                             checkBoxText = "Covaxin"
                         )
 
+                        // Sputnik V Checkbox
+                        CheckboxComponent(
+                            checked = viewModel.isSputnikV,
+                            onCheckedChange = viewModel::onSputnikVChange,
+                            checkBoxText = "Sputnik V"
+                        )
+
                         Spacer(modifier = Modifier.padding(4.dp))
 
                         Text(text = "Select age group:", style = MaterialTheme.typography.caption)
@@ -182,14 +200,21 @@ fun CreateAlertScreen(
 }
 
 
+@ExperimentalComposeUiApi
 @Composable
 fun AlertTextField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(placeholder) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Password
+        ),
     )
 }
 

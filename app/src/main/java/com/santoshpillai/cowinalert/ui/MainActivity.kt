@@ -3,14 +3,14 @@ package com.santoshpillai.cowinalert.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.rememberNavController
 import com.santoshpillai.cowinalert.data.local.AlertDatabase
 import com.santoshpillai.cowinalert.data.model.Result
 import com.santoshpillai.cowinalert.ui.alertscreen.AlertScreen
@@ -22,6 +22,7 @@ import com.santoshpillai.cowinalert.ui.createscreen.CreateAlertViewModelFactory
 import com.santoshpillai.cowinalert.ui.resultscreen.ResultScreen
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val application = requireNotNull(this).application
@@ -73,15 +74,16 @@ class MainActivity : ComponentActivity() {
                     val alertName = it.arguments?.getString("alertName")
                     val alertID = it.arguments?.getLong("alertID")
                     val results = alertViewModel.result.value?.get(alertID) ?: listOf<Result>()
-                    var selectedResult by remember { mutableStateOf(Result()) }
                     ResultScreen(
                         alertName = alertName,
                         results = results,
-                        onCancel = { navController.navigate("home") },
-                        selectedResult = selectedResult,
-                        onSelectResult = { selectedResult = it }
+                        onCancel = {
+                            navController.navigate("home") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        },
 
-                    )
+                        )
                 }
             }
         }
